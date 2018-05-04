@@ -1,0 +1,83 @@
+(* FILE TO TEST FLEX IMPLEMENTATION*)
+(* Testing keywords (and comments)*)
+
+andi (*should find IDENTIFIER*)
+and
+div
+function
+mod
+procedure
+result
+array
+do
+goto
+not
+program
+return
+boolean
+else
+if
+of
+real
+then
+char
+for
+integer
+or
+repeat
+until
+begin
+end
+var
+while
+to
+downto
+
+(* Testing integer positive constraints*)
+0
+42
+1284200
+3
+100001
+
+(*Testing real positive constraints*)
+42.0
+4.2e1
+0.420E+2
+42000.0e-3
+
+(*Testing Boolean Constants*)
+true
+false
+'true' (*Should be String*)
+
+(*Testing assignment and simple operators*)
+i := 5 + 3;
+i := k ^ 2; (* Should not work *)
+
+(* Testing strings*)
+"sdiiodjfioe\n"
+'to onoma mou einai paris\n'
+"\n \t tora kai me newline\n"
+(* Instruction examples*)
+'a'
+"M"
+"\n"
+'\''
+"\\"
+'\"'
+"\""
+"abc"
+'Route 66'
+"Hello World!\n"
+"Item:\t\"Laser Printer\"\nPrice:\t$142\n"
+'Item:\t\"Laser Printer\"\nPrice:\t$142\n'
+
+(* Testing operators*)
+2\3
+
+
+
+"this is a string" // 'eimai o paris'
+//"eimai o paris"
+//eimai o paris
