@@ -591,8 +591,8 @@ int yy_flex_debug = 0;
 #define YY_MORE_ADJ 0
 #define YY_RESTORE_YY_MORE_OFFSET
 char *yytext;
-#line 1 "ptucc_lex.l"
-#line 2 "ptucc_lex.l"
+#line 1 "fl_lex.l"
+#line 2 "fl_lex.l"
 #include <assert.h>
 #include <stdio.h>
 #include <string.h>
@@ -899,7 +899,7 @@ YY_DECL
 		}
 
 	{
-#line 97 "ptucc_lex.l"
+#line 97 "fl_lex.l"
 
 
 #line 906 "lex.yy.c"
@@ -961,12 +961,12 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 99 "ptucc_lex.l"
+#line 99 "fl_lex.l"
 BEGIN(macro);
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 100 "ptucc_lex.l"
+#line 100 "fl_lex.l"
 {
 							/* Store macro name */
 							char* name = strdup(yytext);
@@ -987,167 +987,167 @@ YY_RULE_SETUP
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 118 "ptucc_lex.l"
+#line 118 "fl_lex.l"
 return KEYWORD_PROGRAM;
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 119 "ptucc_lex.l"
+#line 119 "fl_lex.l"
 return KEYWORD_BEGIN;
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 120 "ptucc_lex.l"
+#line 120 "fl_lex.l"
 return KEYWORD_END;
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 121 "ptucc_lex.l"
+#line 121 "fl_lex.l"
 return KEYWORD_AND;
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 122 "ptucc_lex.l"
+#line 122 "fl_lex.l"
 return KEYWORD_DIV;
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 123 "ptucc_lex.l"
+#line 123 "fl_lex.l"
 return KEYWORD_FUNCTION;
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 124 "ptucc_lex.l"
+#line 124 "fl_lex.l"
 return KEYWORD_MOD;
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 125 "ptucc_lex.l"
+#line 125 "fl_lex.l"
 return KEYWORD_PROCEDURE;
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 126 "ptucc_lex.l"
+#line 126 "fl_lex.l"
 return KEYWORD_RESULT;
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 127 "ptucc_lex.l"
+#line 127 "fl_lex.l"
 return KEYWORD_ARRAY;
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 128 "ptucc_lex.l"
+#line 128 "fl_lex.l"
 return KEYWORD_DO;
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 129 "ptucc_lex.l"
+#line 129 "fl_lex.l"
 return KEYWORD_GOTO;
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 130 "ptucc_lex.l"
+#line 130 "fl_lex.l"
 return KEYWORD_NOT;
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 131 "ptucc_lex.l"
+#line 131 "fl_lex.l"
 return KEYWORD_RETURN;
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 132 "ptucc_lex.l"
+#line 132 "fl_lex.l"
 return KEYWORD_BOOLEAN;
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 133 "ptucc_lex.l"
+#line 133 "fl_lex.l"
 return KEYWORD_ELSE;
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 134 "ptucc_lex.l"
+#line 134 "fl_lex.l"
 return KEYWORD_IF;
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 135 "ptucc_lex.l"
+#line 135 "fl_lex.l"
 return KEYWORD_OF;
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 136 "ptucc_lex.l"
+#line 136 "fl_lex.l"
 return KEYWORD_REAL;
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 137 "ptucc_lex.l"
+#line 137 "fl_lex.l"
 return KEYWORD_THEN;
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 138 "ptucc_lex.l"
+#line 138 "fl_lex.l"
 return KEYWORD_CHAR;
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 139 "ptucc_lex.l"
+#line 139 "fl_lex.l"
 return KEYWORD_FOR;
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 140 "ptucc_lex.l"
+#line 140 "fl_lex.l"
 return KEYWORD_INTEGER;
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 141 "ptucc_lex.l"
+#line 141 "fl_lex.l"
 return KEYWORD_OR;
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 142 "ptucc_lex.l"
+#line 142 "fl_lex.l"
 return KEYWORD_REPEAT;
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 143 "ptucc_lex.l"
+#line 143 "fl_lex.l"
 return KEYWORD_UNTIL;
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 144 "ptucc_lex.l"
+#line 144 "fl_lex.l"
 return KEYWORD_VAR;
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 145 "ptucc_lex.l"
+#line 145 "fl_lex.l"
 return KEYWORD_WHILE;
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 146 "ptucc_lex.l"
+#line 146 "fl_lex.l"
 return KEYWORD_TO;
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 147 "ptucc_lex.l"
+#line 147 "fl_lex.l"
 return KEYWORD_DOWNTO;
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 149 "ptucc_lex.l"
+#line 149 "fl_lex.l"
 return BOOL_TRUE;
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 150 "ptucc_lex.l"
+#line 150 "fl_lex.l"
 return BOOL_FALSE;
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 152 "ptucc_lex.l"
+#line 152 "fl_lex.l"
 {
 						   char* def = get_macro(yytext);
 						   if(def==NULL) {
@@ -1161,197 +1161,197 @@ YY_RULE_SETUP
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 163 "ptucc_lex.l"
+#line 163 "fl_lex.l"
 {/* yylval.crepr = strdup(yytext);*/ return POSINT; }
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 164 "ptucc_lex.l"
+#line 164 "fl_lex.l"
 {/* yylval.crepr = strdup(yytext);*/ return REAL; }
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
-#line 165 "ptucc_lex.l"
+#line 165 "fl_lex.l"
 { /* yylval.crepr = strdup(yytext);*/ return STRING; }
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
-#line 167 "ptucc_lex.l"
+#line 167 "fl_lex.l"
 return OP_PLUS;
 	YY_BREAK
 case 40:
 YY_RULE_SETUP
-#line 168 "ptucc_lex.l"
+#line 168 "fl_lex.l"
 return OP_MINUS;
 	YY_BREAK
 case 41:
 YY_RULE_SETUP
-#line 169 "ptucc_lex.l"
+#line 169 "fl_lex.l"
 return OP_MULTIPLY;
 	YY_BREAK
 case 42:
 YY_RULE_SETUP
-#line 170 "ptucc_lex.l"
+#line 170 "fl_lex.l"
 return OP_DIVIDE;
 	YY_BREAK
 case 43:
 YY_RULE_SETUP
-#line 171 "ptucc_lex.l"
+#line 171 "fl_lex.l"
 return OP_EQUAL;
 	YY_BREAK
 case 44:
 YY_RULE_SETUP
-#line 172 "ptucc_lex.l"
+#line 172 "fl_lex.l"
 return OP_INEQUAL;
 	YY_BREAK
 case 45:
 YY_RULE_SETUP
-#line 173 "ptucc_lex.l"
+#line 173 "fl_lex.l"
 return OP_LESS;
 	YY_BREAK
 case 46:
 YY_RULE_SETUP
-#line 174 "ptucc_lex.l"
+#line 174 "fl_lex.l"
 return OP_GREATER;
 	YY_BREAK
 case 47:
 YY_RULE_SETUP
-#line 175 "ptucc_lex.l"
+#line 175 "fl_lex.l"
 return OP_LESSEQ;
 	YY_BREAK
 case 48:
 YY_RULE_SETUP
-#line 176 "ptucc_lex.l"
+#line 176 "fl_lex.l"
 return OP_GREATEREQ;
 	YY_BREAK
 case 49:
 YY_RULE_SETUP
-#line 177 "ptucc_lex.l"
+#line 177 "fl_lex.l"
 return KEYWORD_AND;
 	YY_BREAK
 case 50:
 YY_RULE_SETUP
-#line 178 "ptucc_lex.l"
+#line 178 "fl_lex.l"
 return KEYWORD_OR;
 	YY_BREAK
 case 51:
 YY_RULE_SETUP
-#line 179 "ptucc_lex.l"
+#line 179 "fl_lex.l"
 return KEYWORD_NOT;
 	YY_BREAK
 case 52:
 YY_RULE_SETUP
-#line 181 "ptucc_lex.l"
+#line 181 "fl_lex.l"
 return SEMICOLON;
 	YY_BREAK
 case 53:
 YY_RULE_SETUP
-#line 182 "ptucc_lex.l"
+#line 182 "fl_lex.l"
 return DOT;
 	YY_BREAK
 case 54:
 YY_RULE_SETUP
-#line 183 "ptucc_lex.l"
+#line 183 "fl_lex.l"
 return LEFT_PARENTHESIS;
 	YY_BREAK
 case 55:
 YY_RULE_SETUP
-#line 184 "ptucc_lex.l"
+#line 184 "fl_lex.l"
 return RIGHT_PARENTHESIS;
 	YY_BREAK
 case 56:
 YY_RULE_SETUP
-#line 185 "ptucc_lex.l"
+#line 185 "fl_lex.l"
 return COMMA;
 	YY_BREAK
 case 57:
 YY_RULE_SETUP
-#line 186 "ptucc_lex.l"
+#line 186 "fl_lex.l"
 return LEFT_BRACKET;
 	YY_BREAK
 case 58:
 YY_RULE_SETUP
-#line 187 "ptucc_lex.l"
+#line 187 "fl_lex.l"
 return RIGHT_BRACKET;
 	YY_BREAK
 case 59:
 YY_RULE_SETUP
-#line 188 "ptucc_lex.l"
+#line 188 "fl_lex.l"
 return ASSIGNMENT;
 	YY_BREAK
 case 60:
 YY_RULE_SETUP
-#line 189 "ptucc_lex.l"
+#line 189 "fl_lex.l"
 return STATEMENT;
 	YY_BREAK
 case 61:
 YY_RULE_SETUP
-#line 191 "ptucc_lex.l"
+#line 191 "fl_lex.l"
 BEGIN(comment);
 	YY_BREAK
 case 62:
 YY_RULE_SETUP
-#line 192 "ptucc_lex.l"
+#line 192 "fl_lex.l"
 /* eat anything that's not a '*' */
 	YY_BREAK
 case 63:
 YY_RULE_SETUP
-#line 193 "ptucc_lex.l"
+#line 193 "fl_lex.l"
 /* eat up '*'s not followed by ')'s */
 	YY_BREAK
 case 64:
 /* rule 64 can match eol */
 YY_RULE_SETUP
-#line 194 "ptucc_lex.l"
+#line 194 "fl_lex.l"
 ++line_num;
 	YY_BREAK
 case 65:
 YY_RULE_SETUP
-#line 195 "ptucc_lex.l"
+#line 195 "fl_lex.l"
 BEGIN(INITIAL);
 	YY_BREAK
 case 66:
 YY_RULE_SETUP
-#line 197 "ptucc_lex.l"
+#line 197 "fl_lex.l"
 BEGIN(commentLine);
 	YY_BREAK
 case 67:
 YY_RULE_SETUP
-#line 198 "ptucc_lex.l"
+#line 198 "fl_lex.l"
 /* eat anything until newline */
 	YY_BREAK
 case 68:
 /* rule 68 can match eol */
 YY_RULE_SETUP
-#line 199 "ptucc_lex.l"
+#line 199 "fl_lex.l"
 ++line_num; BEGIN(INITIAL);
 	YY_BREAK
 case 69:
 YY_RULE_SETUP
-#line 201 "ptucc_lex.l"
+#line 201 "fl_lex.l"
 /* skip whitespace */
 	YY_BREAK
 case 70:
 /* rule 70 can match eol */
 YY_RULE_SETUP
-#line 202 "ptucc_lex.l"
+#line 202 "fl_lex.l"
 ++line_num;
 	YY_BREAK
 case YY_STATE_EOF(INITIAL):
 case YY_STATE_EOF(comment):
 case YY_STATE_EOF(macro):
 case YY_STATE_EOF(commentLine):
-#line 203 "ptucc_lex.l"
+#line 203 "fl_lex.l"
 return EOF;
 	YY_BREAK
 case 71:
 YY_RULE_SETUP
-#line 205 "ptucc_lex.l"
+#line 205 "fl_lex.l"
 { printf("lexical error: unrecognized literal '%s'\n", yytext); /*yyerror("lexical error: unrecognized literal '%s'\n", yytext); */}
 	YY_BREAK
 case 72:
 YY_RULE_SETUP
-#line 208 "ptucc_lex.l"
+#line 208 "fl_lex.l"
 ECHO;
 	YY_BREAK
 #line 1358 "lex.yy.c"
@@ -2353,7 +2353,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 208 "ptucc_lex.l"
+#line 208 "fl_lex.l"
 
 
 
