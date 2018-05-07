@@ -89,7 +89,7 @@ DIGIT  [0-9]
 NUMBER  {DIGIT}{DIGIT}*
 DECIMAL {NUMBER}("."{NUMBER})?
 REAL    {DECIMAL}([eE][+-]?{NUMBER})?
-STRING  ['"][^['\n]*("\'")*("\"")*[^'\n]*['"]
+STRING  ('[^'\n]*("\\'")*[^'\n]*("\\\"")*[^'\n]*')|(\"[^'\n]*("\\'")*[^'\n]*("\\\"")*[^'\n]*\")
 TYPE	integer|real|char|boolean
 CAST	"("{TYPE}")"
 
@@ -173,7 +173,7 @@ false					return BOOL_FALSE;
 "+"						return OP_PLUS;
 "-"						return OP_MINUS;
 "*"						return OP_MULTIPLY;
-"\\"					return OP_DIVIDE;
+"/"					return OP_DIVIDE;
 "="						return OP_EQUAL;
 "<>"					return OP_INEQUAL;
 "<"						return OP_LESS;

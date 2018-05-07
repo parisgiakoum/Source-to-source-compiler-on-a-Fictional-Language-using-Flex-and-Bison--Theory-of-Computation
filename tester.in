@@ -40,6 +40,9 @@ downto
 3
 100001
 
+
+
+
 (*Testing real positive constraints*)
 42.0
 4.2e1
@@ -49,16 +52,16 @@ downto
 (*Testing Boolean Constants*)
 true
 false
-'true' (*Should be String*)
+'true' //Should be String*)
 
 (*Testing assignment and simple operators*)
 i := 5 + 3;
 i := k ^ 2; (* Should not work *)
 
 (* Testing strings*)
-"sdiiodjfioe\n"
+"sdiiodjfioe\n\n"
 'to onoma mou einai paris\n'
-"\n \t tora kai me newline\n"
+"\n \t tora kai makis\n"
 (* Instruction examples*)
 'a'
 "M"
@@ -72,20 +75,34 @@ i := k ^ 2; (* Should not work *)
 "Hello World!\n"
 "Item:\t\"Laser Printer\"\nPrice:\t$142\n"
 'Item:\t\"Laser Printer\"\nPrice:\t$142\n'
+'paris' ; 'paris\n'
+"paris\"makis\'magkes"
+
+// Testing defmacro
+@defmacro paris 0
+@defmacro makis 1
 
 (* Testing operators*)
-2\3
+2/3
+i:=5 mod 2
+if (paris && makis)
+if (paris and makis)
+paris <> makis
+paris > makis
 
 
-
+// Testing line comments
 "this is a string" // 'eimai o paris'
 //"eimai o paris"
 //eimai o paris
 
-(*Testing casting operation*)
+(*Testing double casting operation*)
 (integer) i := 'e';
 
 (*Testing macro operations*)
-@defmacro paris 1345
-i := 2;
+@defmacro paris 1200
 i := paris;
+
+// Testing delimiters
+begin this.
+end 3p
