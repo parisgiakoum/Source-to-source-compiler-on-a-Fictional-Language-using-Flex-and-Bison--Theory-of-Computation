@@ -81,3 +81,11 @@ i := k ^ 2; (* Should not work *)
 "this is a string" // 'eimai o paris'
 //"eimai o paris"
 //eimai o paris
+
+(*Testing casting operation*)
+(integer) i := 'e';
+
+(*Testing macro operations*)
+@defmacro paris 1345
+i := 2;
+i := paris;

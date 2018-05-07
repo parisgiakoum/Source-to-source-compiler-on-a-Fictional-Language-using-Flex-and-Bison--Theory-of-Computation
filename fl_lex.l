@@ -28,6 +28,7 @@
 #define OP_GREATER 306
 #define OP_LESSEQ 307
 #define OP_GREATEREQ 308
+#define OP_CAST 313
 
 #define COMMA 309
 #define LEFT_BRACKET 310
@@ -89,6 +90,8 @@ NUMBER  {DIGIT}{DIGIT}*
 DECIMAL {NUMBER}("."{NUMBER})?
 REAL    {DECIMAL}([eE][+-]?{NUMBER})?
 STRING  ['"][^['\n]*("\'")*("\"")*[^'\n]*['"]
+TYPE	integer|real|char|boolean
+CAST	"("{TYPE}")"
 
 %x comment
 %x macro
@@ -109,6 +112,7 @@ STRING  ['"][^['\n]*("\'")*("\"")*[^'\n]*['"]
 							while((c=input())!='\n')
 							   fputc(c, deff);
 							fclose(deff);
+							++ line_num;
 
 							if(!set_macro(name, def))
 								printf("lexer error: failed to define macro '%s'\n", name); /*yyerror("lexer error: failed to define macro '%s'\n", name);*/
@@ -160,9 +164,11 @@ false					return BOOL_FALSE;
 						   }
 						}	
 
+
 {NUMBER}				{/* yylval.crepr = strdup(yytext);*/ return POSINT; }
 {REAL}					{/* yylval.crepr = strdup(yytext);*/ return REAL; }
 {STRING}				{ /* yylval.crepr = strdup(yytext);*/ return STRING; }
+{CAST}					return OP_CAST;
 
 "+"						return OP_PLUS;
 "-"						return OP_MINUS;
