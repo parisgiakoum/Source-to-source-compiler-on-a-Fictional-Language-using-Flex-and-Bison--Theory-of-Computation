@@ -89,13 +89,12 @@ DIGIT  [0-9]
 NUMBER  {DIGIT}{DIGIT}*
 DECIMAL {NUMBER}("."{NUMBER})?
 REAL    {DECIMAL}([eE][+-]?{NUMBER})?
-STRING  ('[^'\n]*("\\'")*[^'\n]*("\\\"")*[^'\n]*')|(\"[^'\n]*("\\'")*[^'\n]*("\\\"")*[^'\n]*\")
+STRING   ('[^'\n]*("\\'")*[^'\n]*("\\\"")*[^'\n]*')|(\"[^'\n]*("\\'")*[^'\n]*("\\\"")*[^'\n]*\")
 TYPE	integer|real|char|boolean
 CAST	"("{TYPE}")"
 
 %x comment
 %x macro
-%x commentLine
 
 %%
 
@@ -200,9 +199,7 @@ false					return BOOL_FALSE;
 <comment>\n             ++line_num;
 <comment>"*"+")"        BEGIN(INITIAL);
 
-"//"					BEGIN(commentLine);
-<commentLine>[^\n]*		/* eat anything until newline */
-<commentLine>\n 		++line_num; BEGIN(INITIAL);
+"//"[^\n]*				/* Line Comments */
 
 [ \r\t]					/* skip whitespace */
 \n 						++line_num;
