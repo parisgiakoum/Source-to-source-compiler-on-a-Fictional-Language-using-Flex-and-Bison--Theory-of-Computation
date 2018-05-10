@@ -65,6 +65,7 @@
 #define KEYWORD_WHILE 295
 #define KEYWORD_TO 296
 #define KEYWORD_DOWNTO 297
+#define KW_TYPE 314
 
 int line_num = 1;
 
@@ -148,6 +149,7 @@ var 					return KEYWORD_VAR;
 while					return KEYWORD_WHILE;
 to 						return KEYWORD_TO;
 downto					return KEYWORD_DOWNTO;
+type					return KW_TYPE;
 
 true					return BOOL_TRUE;
 false					return BOOL_FALSE;
