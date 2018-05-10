@@ -80,9 +80,12 @@ extern int line_num;
 //%right '+' '-'
 %right KW_NOT '!'
 
+%precedence KW_THEN
+%precedence KW_ELSE
+
 %%
 
-program:  program_decl var_decl proc_decl body '.'   		
+program:  program_decl var_decl subroutine_list body '.'   		
 { 
 	/* We have a successful parse! 
 		Check for any errors and generate output. 
@@ -99,19 +102,18 @@ program_decl : KW_PROGRAM IDENT ';'  	{ $$ = $2; };
 
 body : KW_BEGIN statements KW_END   	{ $$ = template("{\n %s \n }\n", $2); };
 
-// statement sinartisewn
-statements: 				        	{ $$ = ""; };
+statements: %empty			        	{ $$ = ""; };
 statements: statement_list		   		{ $$ = $1; };
 
 statement_list: statement                     
 			  | statement_list ';' statement  { $$ = template("%s%s", $1, $3); }; 
 
 
-statement: proc_call  						{ $$ = template("%s;\n", $1); };
+statement: instruction						{ $$ = template("%s;\n", $1); };
 
 proc_call: IDENT '(' arguments ')' 			{ $$ = template("%s(%s)", $1, $3); };
 
-arguments :									{ $$ = ""; }
+arguments :	%empty							{ $$ = ""; }
 	 	  | arglist 						{ $$ = $1; };
 
 arglist: expression							{ $$ = $1; }
@@ -124,7 +126,7 @@ expression: POSINT 							/* Default action: $$ = $1 */
           | KW_FALSE						{ $$ = template("0"); };		  
           | STRING 							{ $$ = string_ptuc2c($1); };
 		  | '(' expression ')'				{ $$ = template("(%s)", $2); };
-		  //| OP_CAST							{ $$ = template("(
+		  //| OP_CAST expression			{ $$ = template("(
 		  |	expression '+' expression		{ $$ = template("%s + %s", $1, $3); };
 		  | expression '-' expression		{ $$ = template("%s - %s", $1, $3); };
 		  | expression '*' expression		{ $$ = template("%s * %s", $1, $3); };
@@ -142,7 +144,9 @@ expression: POSINT 							/* Default action: $$ = $1 */
 		  | expression OP_GREATEREQ expression		{ $$ = template("%s >= %s", $1, $3); };
 		  | expression KW_AND expression		{ $$ = template("%s && %s", $1, $3); };
 		  | expression KW_OR expression		{ $$ = template("%s || %s", $1, $3); };
-		  
+		  | proc_call
+		  //| array call
+
 data_type: KW_INTEGER						{ $$ = template("int"); };
 		 | KW_BOOLEAN						{ $$ = template("int"); };
 		 | KW_CHAR							{ $$ = template("char"); };
@@ -152,9 +156,10 @@ data_type: KW_INTEGER						{ $$ = template("int"); };
 		 | type_decl						{ $$ = $1; };
 		 
 var_decl: %empty							{ $$ = ""; };
-		| KW_VAR var_decl_list
+		| KW_VAR var_decl_list ';'
 
-var_decl_list: var_ident ':' data_type ';'
+var_decl_list: var_ident ':' data_type
+			 | var_decl_list ';' var_decl_list
 		
 var_ident: IDENT
 		 | IDENT ',' var_ident
@@ -163,7 +168,29 @@ array_decl:
 
 type_decl: 
 
-func_decl:
+subroutine_list: %empty						{ $$ = ""; };
+		       | subroutine_list subroutine
+			   
+subroutine: subroutine_decl type_decl var_decl subroutine_list body ';'
+		  
+subroutine_decl: KW_PROCEDURE IDENT '(' var_decl_list ')' ';'
+			   | KW_PROCEDURE IDENT '(' ')' ';'
+			   | KW_FUNCTION IDENT '(' var_decl_list ')' ':'  data_type ';'
+			   | KW_FUNCTION IDENT '(' ')' ':'  data_type ';'
+
+instruction: body
+		   | IDENT ASSIGN expression
+		   | KW_RESULT ASSIGN expression
+		   | KW_IF expression KW_THEN instruction
+		   | KW_IF expression KW_THEN instruction KW_ELSE instruction
+		   | KW_FOR IDENT ASSIGN expression KW_TO expression KW_DO instruction
+		   | KW_FOR IDENT ASSIGN expression KW_DOWNTO expression KW_DO instruction
+		   | KW_WHILE expression KW_DO instruction
+		   | KW_REPEAT instruction KW_UNTIL expression
+		   | IDENT ':' instruction
+		   | KW_GOTO IDENT
+		   | KW_RETURN
+		   | proc_call
 
 %%
 
