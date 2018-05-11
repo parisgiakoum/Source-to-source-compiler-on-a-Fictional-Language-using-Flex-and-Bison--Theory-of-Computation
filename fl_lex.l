@@ -29,8 +29,6 @@ NUMBER  {DIGIT}{DIGIT}*
 DECIMAL {NUMBER}("."{NUMBER})?
 REAL    {DECIMAL}([eE][+-]?{NUMBER})?
 STRING   ('[^'\n]*("\\'")*[^'\n]*("\\\"")*[^'\n]*')|(\"[^'\n]*("\\'")*[^'\n]*("\\\"")*[^'\n]*\")
-TYPE	integer|real|char|boolean
-CAST	"("{TYPE}")"
 
 %x comment
 %x macro
@@ -92,6 +90,11 @@ type					return KW_TYPE;
 true					return KW_TRUE;
 false					return KW_FALSE;
 
+"(integer)"				return CAST_INTEGER;
+"(boolean)"				return CAST_BOOLEAN;
+"(char)"				return CAST_CHAR;
+"(real)"				return CAST_REAL;
+
 {ID}  					{
 						   char* def = get_macro(yytext);
 						   if(def==NULL) {
@@ -107,7 +110,6 @@ false					return KW_FALSE;
 {NUMBER}				{ yylval.crepr = strdup(yytext); return POSINT; }
 {REAL}					{ yylval.crepr = strdup(yytext); return REAL; }
 {STRING}				{ yylval.crepr = strdup(yytext); return STRING; }
-{CAST}					return OP_CAST;
 
 "+"						return '+';
 "-"						return '-';
@@ -121,7 +123,7 @@ false					return KW_FALSE;
 ">="					return OP_GREATEREQ;
 "&&"					return KW_AND;
 "||"					return KW_OR;
-"!"						return '!';
+"!"						return KW_NOT;
 
 ";"						return ';';
 "."						return '.';

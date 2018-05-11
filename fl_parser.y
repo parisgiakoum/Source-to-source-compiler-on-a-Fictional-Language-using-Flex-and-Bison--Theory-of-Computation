@@ -53,7 +53,10 @@ extern int line_num;
 %token KW_TRUE
 %token KW_FALSE
 
-%token OP_CAST
+%token CAST_INTEGER
+%token CAST_BOOLEAN
+%token CAST_CHAR
+%token CAST_REAL
 %token OP_INEQUAL
 %token OP_LESSEQ
 %token OP_GREATEREQ
@@ -70,22 +73,37 @@ extern int line_num;
 %type <crepr> arguments
 %type <crepr> arglist
 %type <crepr> expression
+%type <crepr> data_type
+%type <crepr> func_data_type
+%type <crepr> var_decl
+%type <crepr> var_decl_list
+%type <crepr> var_ident
+%type <crepr> array_decl
+%type <crepr> array_size
+%type <crepr> array_call
+%type <crepr> array_call_size
+%type <crepr> type_decl
+%type <crepr> type_decl_list
+%type <crepr> subroutine_list
+%type <crepr> subroutine
+%type <crepr> subroutine_decl
+%type <crepr> instruction
 
 %left KW_OR
 %left KW_AND
 %left '=' OP_INEQUAL '<' '>' OP_LESSEQ OP_GREATEREQ
 %left '-' '+'
 %left '*' '/' KW_DIV KW_MOD
-%right OP_CAST
-//%right '+' '-'
-%right KW_NOT '!'
+%right CAST_INTEGER CAST_BOOLEAN CAST_CHAR CAST_REAL
+%right UMINUS UPLUS
+%right KW_NOT
 
 %precedence KW_THEN
 %precedence KW_ELSE
 
 %%
 
-program:  program_decl var_decl subroutine_list body '.'   		
+program:  program_decl type_decl var_decl subroutine_list body '.'   		
 { 
 	/* We have a successful parse! 
 		Check for any errors and generate output. 
@@ -122,21 +140,24 @@ arglist: expression							{ $$ = $1; }
 expression: POSINT 							/* Default action: $$ = $1 */
           | REAL							
           | IDENT							
-          | KW_TRUE							{ $$ = template("1"); };		  
-          | KW_FALSE						{ $$ = template("0"); };		  
+          | KW_TRUE							{ $$ = template("1"); };
+          | KW_FALSE						{ $$ = template("0"); };
           | STRING 							{ $$ = string_ptuc2c($1); };
 		  | '(' expression ')'				{ $$ = template("(%s)", $2); };
-		  //| OP_CAST expression			{ $$ = template("(
+		  | CAST_INTEGER expression			{ $$ = template("(int) %s", $2); };
+		  | CAST_BOOLEAN expression			{ $$ = template("(int) %s", $2); };
+		  | CAST_CHAR expression			{ $$ = template("(char) %s", $2); };
+		  | CAST_REAL expression			{ $$ = template("(double) %s", $2); };
 		  |	expression '+' expression		{ $$ = template("%s + %s", $1, $3); };
 		  | expression '-' expression		{ $$ = template("%s - %s", $1, $3); };
 		  | expression '*' expression		{ $$ = template("%s * %s", $1, $3); };
 		  | expression '/' expression		{ $$ = template("%s / %s", $1, $3); };
 		  | expression KW_DIV expression		{ $$ = template("%s / %s", $1, $3); };
-		  | expression mod expression		{ $$ = template("%s % %s", $1, $3); };
+		  | expression KW_MOD expression		{ $$ = template("%s % %s", $1, $3); };
 		  | KW_NOT expression				{ $$ = template("!%s", $2); };
-		  | '-' expression					{ $$ = template("-%s", $2); };
-		  | '+' expression					{ $$ = template("%s", $2); };
-		  | expression = expression			{ $$ = template("%s == %s", $1, $3); };
+		  | '-' expression %prec UMINUS		{ $$ = template("-%s", $2); };
+		  | '+' expression %prec UPLUS		{ $$ = template("%s", $2); };
+		  | expression '=' expression			{ $$ = template("%s == %s", $1, $3); };
 		  |	expression OP_INEQUAL expression		{ $$ = template("%s != %s", $1, $3); };
 		  | expression '<' expression		{ $$ = template("%s < %s", $1, $3); };
 		  | expression '>' expression		{ $$ = template("%s > %s", $1, $3); };
@@ -145,16 +166,18 @@ expression: POSINT 							/* Default action: $$ = $1 */
 		  | expression KW_AND expression		{ $$ = template("%s && %s", $1, $3); };
 		  | expression KW_OR expression		{ $$ = template("%s || %s", $1, $3); };
 		  | proc_call
-		  //| array call
+		  | array_call
 
 data_type: KW_INTEGER						{ $$ = template("int"); };
 		 | KW_BOOLEAN						{ $$ = template("int"); };
 		 | KW_CHAR							{ $$ = template("char"); };
 		 | KW_REAL							{ $$ = template("real"); };
 		 | array_decl						{ $$ = $1; };
-		 | func_decl						{ $$ = $1; };
-		 | type_decl						{ $$ = $1; };
-		 
+		 | func_data_type					{ $$ = $1; };
+		 | IDENT
+
+func_data_type: KW_FUNCTION '(' var_decl_list ')' ':' data_type
+
 var_decl: %empty							{ $$ = ""; };
 		| KW_VAR var_decl_list ';'
 
@@ -164,9 +187,20 @@ var_decl_list: var_ident ':' data_type
 var_ident: IDENT
 		 | IDENT ',' var_ident
 
-array_decl:
+array_decl: KW_ARRAY array_size KW_OF data_type
 
-type_decl: 
+array_size: %empty
+          | '[' expression ']' array_size
+		  
+array_call: IDENT array_call_size
+
+array_call_size: '[' expression ']' array_size
+ 
+type_decl: %empty
+		 | KW_TYPE type_decl_list
+
+type_decl_list: IDENT '=' data_type ';'
+			  | type_decl_list type_decl_list
 
 subroutine_list: %empty						{ $$ = ""; };
 		       | subroutine_list subroutine
