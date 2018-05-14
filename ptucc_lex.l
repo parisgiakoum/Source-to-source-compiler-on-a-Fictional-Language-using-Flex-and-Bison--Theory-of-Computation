@@ -2,7 +2,7 @@
 #include <assert.h>
 #include <stdio.h>
 #include <string.h>
-#include "fl_parser.tab.h"
+#include "ptucc_parser.tab.h"
 #include "cgen.h"
 
 int line_num = 1;
