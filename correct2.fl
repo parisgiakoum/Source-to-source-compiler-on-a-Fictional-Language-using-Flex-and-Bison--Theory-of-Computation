@@ -1,0 +1,60 @@
+program quicksort;
+
+var cnt,size : integer;
+numbersgiven : array[5] of integer;
+
+procedure QSort(numbers : array[5] of integer; left : integer; right : integer);
+var 
+	pivot, l_ptr, r_ptr : integer;
+
+begin
+	l_ptr := left;
+	r_ptr := right;
+	pivot := numbers[left];
+
+	while (left < right) do
+	begin
+		while ((numbers[right] >= pivot) and (left < right)) do
+			right := right - 1;
+			
+		if (left <> right) then
+		begin
+			numbers[left] := numbers[right];
+			left := left + 1
+		end;
+
+		while ((numbers[left] <= pivot) and (left < right)) do
+			left := left + 1;
+
+		if (left <> right) then
+		begin
+			numbers[right] := numbers[left];
+			right := right - 1
+		end
+	end;
+
+	numbers[left] := pivot;
+	pivot := left;
+	left := l_ptr;
+	right := r_ptr;
+
+	if (left < pivot) then
+		QSort(numbers, left, pivot-1);
+
+	if (right > pivot) then
+		QSort(numbers, pivot+1, right)
+end;
+
+
+begin
+	writeString("How many numbers?\n");
+	size := readInteger();
+	cnt := 0;
+	while (cnt < size) do
+	begin
+	writeString("Give number\n");
+	numbersgiven[cnt] := readInteger();
+	cnt := cnt + 1
+	end;
+	QSort(numbersgiven, 0, size-1)
+end.

@@ -1,10 +1,16 @@
 #include "ptuclib.h"
 
 
-/* program  foo */ 
+/* Program foo */ 
 
+/* Type declaration: */
+
+/* Variable declaration: */
+
+/* Function declaration: */
+/* Main: */
 int main() {
- writeString("Hello world");
+writeString("Hello world");
 writeString("\n");
- }
+}
  

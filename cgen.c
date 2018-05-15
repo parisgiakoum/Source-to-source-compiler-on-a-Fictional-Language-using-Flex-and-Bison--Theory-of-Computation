@@ -42,12 +42,7 @@ char* template(const char* pat, ...)
 
 char* string_ptuc2c(char* P)
 {
-	/*
-		This implementation is 
-		***** NOT CORRECT ACCORDING TO THE PROJECT ******
-	*/
-
-	/* Just chech and change the first and last characters */
+	/* Just check and change the first and last characters */
 	int Plen = strlen(P);
 	assert(Plen>=2);
 	P[0] = '"';
@@ -56,6 +51,29 @@ char* string_ptuc2c(char* P)
 	return P;
 }
 
+char* fix_subroutine_idents (char* idents, char* data_type, char* array_size) {
+	char* result;
+	char* token;
+	token = strtok(idents, ",");
+	if (token != NULL && array_size != NULL) {
+		result = template("%s %s%s", data_type, token, array_size);
+		token = strtok(NULL, ",");
+	} else if (token != NULL && array_size == NULL) {
+		result = template("%s %s", data_type, token);
+		token = strtok(NULL, ",");
+	}
+		
+	while (token != NULL) {
+		if (array_size != NULL) {
+			result = template("%s, %s%s%s", result, data_type, token, array_size);
+			token = strtok(NULL, ",");
+		} else {
+			result = template("%s, %s%s", result, data_type, token);
+			token = strtok(NULL, ",");
+		}
+	}
+	return result;
+}
 
 
 
@@ -81,30 +99,6 @@ const char* c_prologue =
 "#include \"ptuclib.h\"\n"
 "\n"
 ;
-
-char* fix_subroutine_idents (char* idents, char* data_type, char* array_size) {
-	char* result;
-	char* token;
-	token = strtok(idents, ",");
-	if (token != NULL && array_size != NULL) {
-		result = template("%s %s%s", data_type, token, array_size);
-		token = strtok(NULL, ",");
-	} else if (token != NULL && array_size == NULL) {
-		result = template("%s %s", data_type, token);
-		token = strtok(NULL, ",");
-	}
-		
-	while (token != NULL) {
-		if (array_size != NULL) {
-			result = template("%s, %s%s%s", result, data_type, token, array_size);
-			token = strtok(NULL, ",");
-		} else {
-			result = template("%s, %s%s", result, data_type, token);
-			token = strtok(NULL, ",");
-		}
-	}
-	return result;
-}
 
 
 

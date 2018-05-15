@@ -7,6 +7,8 @@
 typedef char* foo;
 typedef char iodjei;
 typedef foo testarray[10];
+typedef foo (*transformation)(foo x, foo y, int z);
+typedef iodjei (*transformation1)();
 
 /* Variable declaration: */
 int i;
@@ -15,6 +17,8 @@ char s, testar2[80];
 int t[2];
 char* stringvar;
 foo testarraye;
+foo (*testfuncpoint)(foo x, foo y, int (*testfuncpoint2)(int t, int ps), char z, char u);
+int (*testfuncpoint1)();
 
 /* Function declaration: */
 void add(int n, int k, int g[10], int h[10], int f[10])
@@ -50,12 +54,13 @@ writeReal((3.1415927 * 2));
 writeString("\n");
 i = 1 + 2 + 3 + 4 + 5;
 writeInteger(i);
-testarraye = "\npipa\n";
-writeString(testarraye);
 i = cube(3);
 writeString("cube(3) = ");
 writeInteger(i);
 writeString("\n\n");
+stringvar = "Item:\t\"Laser Printer\"\nPrice:\t$142\n";
+writeString(stringvar);
+writeString("\n");
 for (i = 1 - 1; i <= 10 / 2; i++)
 {
 writeString("i= ");
@@ -89,13 +94,13 @@ writeString("\n");
 i = (int)i - 1;
 }
 while ((i >= 0));
-gets(testar2);
+scanf("%s", &testar2);
 writeString(testar2);
 writeString("\n\n");
 scanf("%d", &i);
 writeInteger(i);
 writeString("\n\n");
-scanf("%g", &x);
+scanf("%lf", &x);
 writeReal(x);
 writeString("\n\n");
 if ((3.1415927 * 2) < 5)

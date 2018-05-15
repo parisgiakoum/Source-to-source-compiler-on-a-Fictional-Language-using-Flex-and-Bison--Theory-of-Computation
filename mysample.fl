@@ -9,6 +9,8 @@ type
 	foo = array of char;
 	iodjei = char;
 	testarray = array [10] of foo;
+	transformation = function(x, y: foo; z: integer): foo;
+	transformation1 = function(): iodjei;
 	
 var 
 	i : integer;
@@ -17,7 +19,8 @@ var
 	t: array [2] of int;
 	stringvar: array of char;
 	testarraye: foo;
-	
+	testfuncpoint : function(x, y: foo; testfuncpoint2 : function(t, ps: integer): integer; z, u: char): foo;
+	testfuncpoint1 : function(): integer;
 
 procedure add(n,k:integer; g,h,f:array [10] of integer);
 type int1 = integer;
@@ -42,15 +45,17 @@ begin
 	
 	i := 1+2+3+4+5;
 	writeInteger(i);
-	testarraye := '\npipa\n';
-	writeString(testarraye);
-	
+
 	//add(2,100);
 	i := cube(3);
 	writeString('cube(3) = ');
 	writeInteger(i);
 	writeString("\n\n");
 	
+	
+	stringvar := 'Item:\t\"Laser Printer\"\nPrice:\t$142\n';
+	writeString(stringvar);
+	writeString("\n");
 	
 	//goto lbl;
 	for i := 1-1 to 10/2 do begin
