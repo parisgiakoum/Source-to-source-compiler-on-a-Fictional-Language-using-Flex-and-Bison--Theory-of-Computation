@@ -87,6 +87,10 @@ to 						return KW_TO;
 downto					return KW_DOWNTO;
 type					return KW_TYPE;
 
+readString				return LIB_RS;
+readInteger				return LIB_RI;
+readReal				return LIB_RR;
+
 true					return KW_TRUE;
 false					return KW_FALSE;
 

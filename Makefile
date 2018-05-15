@@ -64,11 +64,10 @@ ptucc_parser.tab.c ptucc_parser.tab.h: ptucc_parser.y
 	$(BISON) -d ptucc_parser.y
 
 test: ptucc
-	./ptucc < sample001.fl > sample001.c
-	gcc -Wall -std=c11 -o sample001 sample001.c
-	./sample001
-
-
+	./ptucc < mysample.fl > mysample.c
+	gcc -Wall -std=c11 -o mysample mysample.c
+	./mysample
+	
 #-----------------------------------------------------
 # Build control
 #-----------------------------------------------------

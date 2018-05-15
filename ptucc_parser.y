@@ -48,6 +48,10 @@ extern int line_num;
 %token KW_DOWNTO
 %token KW_TYPE
 
+%token LIB_RS
+%token LIB_RI
+%token LIB_RR
+
 %token KW_TRUE
 %token KW_FALSE
 
@@ -81,6 +85,13 @@ extern int line_num;
 %type <crepr> var_declaration
 %type <crepr> var_decl_list
 %type <crepr> var_decl
+%type <crepr> subroutine_decl_list
+%type <crepr> subroutine
+%type <crepr> subroutine_decl
+%type <crepr> sub_arg_decl_list
+%type <crepr> sub_arg_decl
+%type <crepr> subproutine_body
+%type <crepr> array_call
 %type <crepr> array_size
 %type <crepr> var_ident
 
@@ -99,7 +110,7 @@ extern int line_num;
 
 %%
 
-program:  program_decl type_declaration var_declaration body '.'  		
+program:  program_decl type_declaration var_declaration subroutine_decl_list body '.'  		
 { 
 	/* We have a successful parse! 
 		Check for any errors and generate output. 
@@ -109,15 +120,15 @@ program:  program_decl type_declaration var_declaration body '.'
 		printf("/* Program %s */ \n\n", $1);
 		printf("/* Type declaration: */\n%s\n", $2);
 		printf("/* Variable declaration: */\n%s\n", $3);
-		//printf("/* Function declaration: */\n%s", $4);
-		printf("/* Main: */\nint main() %s \n", $4);
+		printf("/* Function declaration: */\n%s", $4);
+		printf("/* Main: */\nint main() %s \n", $5);
 	}
 };
 
 
 program_decl : KW_PROGRAM IDENT ';'  	{ $$ = $2; };
 
-body : KW_BEGIN statements KW_END   	{ $$ = template("{\n%s }\n", $2); };
+body : KW_BEGIN statements KW_END   	{ $$ = template("{\n%s}\n", $2); };
 
 statements: 				        	{ $$ = ""; };
 statements: statement_list		   		{ $$ = $1; };
@@ -139,7 +150,8 @@ arglist: expression							{ $$ = $1; }
 
 expression: POSINT 							{ $$ = template("%s",$1); };
           | REAL							{ $$ = template("%s",$1); };
-          | IDENT							{ $$ = template("%s",$1); };
+          | IDENT array_call				{ $$ = template("%s%s", $1, $2); };
+		  | KW_RESULT						{ $$ = template("result"); };
           | KW_TRUE							{ $$ = template("1"); };
           | KW_FALSE						{ $$ = template("0"); };
           | STRING 							{ $$ = string_ptuc2c($1); };
@@ -153,7 +165,7 @@ expression: POSINT 							{ $$ = template("%s",$1); };
 		  | expression '*' expression		{ $$ = template("%s * %s", $1, $3); };
 		  | expression '/' expression		{ $$ = template("%s / %s", $1, $3); };
 		  | expression KW_DIV expression		{ $$ = template("%s / %s", $1, $3); };
-		  | expression KW_MOD expression		{ $$ = template("%s % %s", $1, $3); };
+		  | expression KW_MOD expression		{ $$ = template("%s %% %s", $1, $3); };
 		  | KW_NOT expression            { $$ = template("!%s", $2); };
 		  | '-' expression %prec UMINUS		{ $$ = template("-%s", $2); };
 		  | '+' expression %prec UPLUS		{ $$ = template("%s", $2); };
@@ -166,7 +178,6 @@ expression: POSINT 							{ $$ = template("%s",$1); };
 		  | expression KW_AND expression		{ $$ = template("%s && %s", $1, $3); };
 		  | expression KW_OR expression		{ $$ = template("%s || %s", $1, $3); };
 		  | proc_call 						{ $$ = $1; };
-		  //|arraycall
 		  
 data_type: basic_data_type					{ $$ = $1; };
 		 | array_of_type	 				{ $$ = $1; };
@@ -199,25 +210,55 @@ var_decl_list: var_decl									{ $$ = $1; };
 var_decl: var_ident ':' data_type																			{ $$ = template("%s %s;\n", $3, $1); };
 		| var_ident ':' KW_ARRAY array_size KW_OF basic_data_type 											{ $$ = template("%s %s%s;\n", $6, $1, $4); };
 		//| var_decl_function																				{ $$ = template("%s", $1); };
+		
+subroutine_decl_list:	 																					{ $$ = ""; };
+					  | subroutine_decl_list subroutine														{ $$ = template("%s%s", $1, $2);  };
+					  
+subroutine: subroutine_decl type_declaration var_declaration subroutine_decl_list subproutine_body ';'					{ $$ = template("%s%s%s\n%s\n%s}\n\n", $1, $2, $3, $4, $5);  };
 
+subroutine_decl: KW_PROCEDURE IDENT '(' sub_arg_decl_list ')' ';'															{ $$ = template("void %s(%s)\n{\n", $2, $4);  };
+			   | KW_PROCEDURE IDENT '(' ')' ';'																				{ $$ = template("void %s()\n{\n", $2);  };
+			   | KW_FUNCTION IDENT '(' sub_arg_decl_list ')' ':'  data_type ';'												{ $$ = template("%s %s(%s)\n{\n%s result;\n", $7, $2, $4, $7);  };
+			   | KW_FUNCTION IDENT '(' ')' ':'  data_type ';'																{ $$ = template("%s %s()\n{\n%s result;\n", $6, $2, $6);  };
+
+sub_arg_decl_list: sub_arg_decl									{ $$ = $1; };
+			 | sub_arg_decl_list ';' sub_arg_decl				{ $$ = template("%s, %s", $1, $3);  };
+
+sub_arg_decl: var_ident ':' data_type																   				{ $$ = fix_subroutine_idents($1, $3, NULL); };
+			| var_ident ':' KW_ARRAY array_size KW_OF basic_data_type 												{ $$ = fix_subroutine_idents($1, $6, $4); };
+		//| var_decl_function																						{ $$ = template("%s", $1); };
+		
+
+		
+subproutine_body: KW_BEGIN statements KW_END  																 	{ $$ = template("%s", $2); };
+		
 var_ident: IDENT							{ $$ = template("%s", $1); };
 		 | IDENT ',' var_ident				{ $$ = template("%s, %s", $1, $3); };
+		 
+array_call: 								{ $$ = ""; };
+		  | array_size						{ $$ = $1; };
 		 
 array_size: '[' expression ']'						{ $$ = template("[%s]", $2); };
 		  | '[' expression ']' array_size			{ $$ = template("[%s]%s", $2, $4); };
 		  
 instruction: body 																							{ $$ = $1; };
-		   | IDENT ASSIGN expression																		{ $$ = template("%s = %s;\n", $1, $3); };
-		   | KW_RESULT ASSIGN expression																	{ $$ = template("return %s;\n", $3); };
-		   | KW_IF expression KW_THEN statement															{ $$ = template("if (%s)\n%s", $2, $4); };
-		   | KW_IF expression KW_THEN statement KW_ELSE statement										{ $$ = template("if (%s)\n%selse %s", $2, $4, $6); };
-		   | KW_FOR IDENT ASSIGN expression KW_TO expression KW_DO statement						   	    { $$ = template("for (%s = %s; %s <= %s; %s++)\n%s", $2, $4, $2, $6, $2, $8); };
-		   | KW_FOR IDENT ASSIGN expression KW_DOWNTO expression KW_DO statement							{ $$ = template("for (%s = %s; %s >= %s; %s--) %s", $2, $4, $2, $6, $2, $8); };
+		   | IDENT array_call ASSIGN expression																{ $$ = template("%s%s = %s;\n", $1, $2, $4); };
+		   | KW_RESULT ASSIGN expression																	{ $$ = template("result = %s;\n", $3); };
+		   | KW_IF expression KW_THEN statement																{ $$ = template("if (%s)\n%s", $2, $4); };
+		   | KW_IF expression KW_THEN statement KW_ELSE statement											{ $$ = template("if (%s)\n%selse %s", $2, $4, $6); };
+		   | KW_FOR IDENT array_call ASSIGN expression KW_TO expression KW_DO statement					    { $$ = template("for (%s%s = %s; %s%s <= %s; %s%s++)\n%s", $2, $3, $5, $2, $3, $7, $2, $3, $9); };
+		   | KW_FOR IDENT array_call ASSIGN expression KW_DOWNTO expression KW_DO statement					{ $$ = template("for (%s%s = %s; %s%s >= %s; %s%s--) %s", $2, $3, $5, $2, $3, $7, $2, $3, $9); };
 		   | KW_WHILE expression KW_DO statement															{ $$ = template("while (%s) %s", $2, $4); };
 		   | KW_REPEAT statement KW_UNTIL expression														{ $$ = template("do\n%swhile (%s);\n", $2, $4); };
 		   | IDENT ':' statement																			{ $$ = template("%s:%s", $1, $3); };
 		   | KW_GOTO IDENT																					{ $$ = template("goto %s;\n", $2); };
-		   | KW_RETURN																						{ $$ = template("break;\n"); };
+		   | KW_RETURN																						{ $$ = template("return result;\n"); };
+		   | IDENT array_call ASSIGN LIB_RS '(' ')'															{ $$ = template("gets(%s%s);\n", $1, $2); };
+		   | IDENT array_call ASSIGN LIB_RI '(' ')'															{ $$ = template("scanf(\"%%d\", &%s%s);\n", $1, $2); };
+		   | IDENT array_call ASSIGN LIB_RR '(' ')'															{ $$ = template("scanf(\"%%g\", &%s%s);\n", $1, $2); };
+		   | KW_RESULT ASSIGN LIB_RS '(' ')'																{ $$ = template("gets(result);\n"); };
+		   | KW_RESULT ASSIGN LIB_RI '(' ')'																{ $$ = template("scanf(\"%%d\", &result);\n"); };
+		   | KW_RESULT ASSIGN LIB_RR '(' ')'																{ $$ = template("scanf(\"%%g\", &result);\n"); };
 
 %%
 

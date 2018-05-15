@@ -80,18 +80,21 @@ extern int yydebug;
     KW_TO = 290,
     KW_DOWNTO = 291,
     KW_TYPE = 292,
-    KW_TRUE = 293,
-    KW_FALSE = 294,
-    CAST_INTEGER = 295,
-    CAST_BOOLEAN = 296,
-    CAST_CHAR = 297,
-    CAST_REAL = 298,
-    OP_INEQUAL = 299,
-    OP_LESSEQ = 300,
-    OP_GREATEREQ = 301,
-    ASSIGN = 302,
-    UMINUS = 303,
-    UPLUS = 304
+    LIB_RS = 293,
+    LIB_RI = 294,
+    LIB_RR = 295,
+    KW_TRUE = 296,
+    KW_FALSE = 297,
+    CAST_INTEGER = 298,
+    CAST_BOOLEAN = 299,
+    CAST_CHAR = 300,
+    CAST_REAL = 301,
+    OP_INEQUAL = 302,
+    OP_LESSEQ = 303,
+    OP_GREATEREQ = 304,
+    ASSIGN = 305,
+    UMINUS = 306,
+    UPLUS = 307
   };
 #endif
 
@@ -104,7 +107,7 @@ union YYSTYPE
 
 	char* crepr;
 
-#line 108 "ptucc_parser.tab.h" /* yacc.c:1909  */
+#line 111 "ptucc_parser.tab.h" /* yacc.c:1909  */
 };
 
 typedef union YYSTYPE YYSTYPE;

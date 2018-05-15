@@ -82,6 +82,30 @@ const char* c_prologue =
 "\n"
 ;
 
+char* fix_subroutine_idents (char* idents, char* data_type, char* array_size) {
+	char* result;
+	char* token;
+	token = strtok(idents, ",");
+	if (token != NULL && array_size != NULL) {
+		result = template("%s %s%s", data_type, token, array_size);
+		token = strtok(NULL, ",");
+	} else if (token != NULL && array_size == NULL) {
+		result = template("%s %s", data_type, token);
+		token = strtok(NULL, ",");
+	}
+		
+	while (token != NULL) {
+		if (array_size != NULL) {
+			result = template("%s, %s%s%s", result, data_type, token, array_size);
+			token = strtok(NULL, ",");
+		} else {
+			result = template("%s, %s%s", result, data_type, token);
+			token = strtok(NULL, ",");
+		}
+	}
+	return result;
+}
+
 
 
 

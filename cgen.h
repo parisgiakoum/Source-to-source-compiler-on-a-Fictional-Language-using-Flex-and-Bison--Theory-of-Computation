@@ -43,5 +43,7 @@ extern const char* c_prologue;
 */
 char* string_ptuc2c(char* P);
 
+char* fix_subroutine_idents (char* idents, char* data_type, char* array_size);
+
 
 #endif
