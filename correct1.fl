@@ -1,54 +1,106 @@
-program TowersofHanoi;
+// This is a correct Divide and Conquer based program for maximum subarray sum problem in fl!
+// Algorithm based on https://www.geeksforgeeks.org/divide-and-conquer-maximum-sum-subarray/
+
+program MaximumSubarraySum;
 
 var
-   numdiscs : integer;
+	arr: array [5] of integer;
+	n, max_sum, i : integer;
 
-(********************************************************)
-
-procedure DoTowers (NumDiscs : integer; OrigPeg : integer; NewPeg : integer; TempPeg : integer);
-(* Explanation of variables:
-      Number of discs -- number of discs on OrigPeg
-      OrigPeg -- peg number of the tower
-      NewPeg -- peg number to move the tower to
-      TempPeg -- peg to use for temporary storage
-*)
-
+// A utility funtion to find maximum of two integers
+function max2(a, b:integer): integer;
 begin
-   (* Take care of the base case -- one disc *)
-   if NumDiscs = 1 then
-   begin
-	  writeInteger(OrigPeg);
-      writeString (' ---> ');
-      writeInteger(NewPeg);
-      writeString("\n")
-      end
-   (* Take care of all other cases *)
-   else
-      begin
-         (* First, move all discs except the bottom disc
-            to TempPeg, using NewPeg as the temporary peg
-            for this transfer *)
-         DoTowers (NumDiscs-1, OrigPeg, TempPeg, NewPeg);
-         (* Now, move the bottommost disc from OrigPeg
-            to NewPeg *)
-         writeInteger(OrigPeg);
-		 writeString (' ---> ');
-		 writeInteger(NewPeg);
-		 writeString("\n");
-         (* Finally, move the discs which are currently on
-            TempPeg to NewPeg, using OrigPeg as the temporary
-            peg for this transfer *)
-         DoTowers (NumDiscs-1, TempPeg, NewPeg, OrigPeg)
-      end
+	if a > b then
+		result := a
+	else
+		result := b;	
+	return
 end;
 
-(********************************************************)
+// A utility funtion to find maximum of three integers
+function max(a, b, c:integer): integer;
+begin
+	result := max2(max2(a,b), c);
+	return
+end;
+
+// Find the maximum possible sum in arr[] such that arr[m] is part of it
+function maxCrossingSum(arr: array [5] of integer; l, m, h: integer): integer;
+
+var
+	sum, left_sum, right_sum, i: integer;
+
+begin
+	// Include elements on left of mid.
+	sum := 0;
+	left_sum := -32767; // This is the minimum integer allowed
+	for i := m downto l do
+	begin
+		sum := sum + arr[i];
+		if sum > left_sum then
+			left_sum := sum
+	end;
+
+	 // Include elements on right of mid
+	 sum := 0;
+	 right_sum := -32767; // This is the minimum integer allowed
+	 for i := m+1 to h do
+	 begin
+		sum := sum + arr[i];
+		if sum > right_sum then
+			right_sum := sum
+	end;
+	
+	// Return sum of elements on left and right of mid
+	result := left_sum + right_sum;
+	return
+end;
+
+// Returns maximum sum of subarray arr[l..h]
+function maxSubArraySum(arr: array [5] of integer; l, h: integer): integer;
+var
+	m : integer;
+	
+begin
+	// Base Case: Only one element
+	if l = h then
+	begin
+		result := arr[l];
+		return
+	end;
+	
+	// Find middle point
+	m := (l+h)/2;
+	
+	(* Return maximum of following three possible cases
+     a) Maximum subarray sum in left half
+     b) Maximum subarray sum in right half
+     c) Maximum subarray sum such that the subarray crosses the midpoint *)
+	  
+	result := max(maxSubArraySum(arr, l, m), maxSubArraySum(arr, m+1, h), maxCrossingSum(arr, l, m, h));
+	return
+end;
+
+begin
+	writeString("\nThis is a correct Divide and Conquer based program for maximum subarray sum problem in fl!\n\n");
+	writeString("Give me the size of your array: ");
+	n := readInteger();
+	writeString("\n");
+	for i := 0 to n-1 do
+	begin
+		writeString("Give me value ");
+		writeInteger(i+1);
+		writeString(": ");
+		arr[i] := readInteger()
+	end;
+	max_sum := maxSubArraySum(arr, 0, n-1);
+	writeString("\nMaximum contiguous sum is: ");
+	writeInteger(max_sum);
+	writeString("\n")
+end.
 
 
-begin    (* Main *)
-   writeString ('Please enter the number of discs in the tower ===> ');
-   numdiscs := readInteger ();
-   writeString("\n");
-   DoTowers (numdiscs, 1, 3, 2);
-   writeString("\n")
-end.     (* Main *)
+
+
+
+

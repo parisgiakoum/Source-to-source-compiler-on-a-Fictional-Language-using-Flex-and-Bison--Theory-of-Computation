@@ -76,7 +76,6 @@ char* fix_subroutine_idents (char* idents, char* data_type, char* array_size) {
 }
 
 
-
 /*
 	Report errors 
 */

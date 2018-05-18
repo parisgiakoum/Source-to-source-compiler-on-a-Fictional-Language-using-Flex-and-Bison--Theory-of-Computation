@@ -1,6 +1,5 @@
-#line 2 "ptucc_lex.c"
 
-#line 4 "ptucc_lex.c"
+#line 3 "lex.yy.c"
 
 #define  YY_INT_ALIGNED short int
 
@@ -654,7 +653,7 @@ char* get_macro(char* name);
 
 
 
-#line 658 "ptucc_lex.c"
+#line 657 "lex.yy.c"
 
 #define INITIAL 0
 #define comment 1
@@ -877,7 +876,7 @@ YY_DECL
 #line 36 "ptucc_lex.l"
 
 
-#line 881 "ptucc_lex.c"
+#line 880 "lex.yy.c"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -1358,7 +1357,7 @@ YY_RULE_SETUP
 #line 157 "ptucc_lex.l"
 ECHO;
 	YY_BREAK
-#line 1362 "ptucc_lex.c"
+#line 1361 "lex.yy.c"
 
 	case YY_END_OF_BUFFER:
 		{
@@ -2396,3 +2395,4 @@ char* get_macro(char* name)
 	}
 	return NULL;
 }
+

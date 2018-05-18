@@ -1,60 +1,91 @@
-program quicksort;
+// Thia is a useless program testing every aspect of fl!
 
-var cnt,size : integer;
-numbersgiven : array[5] of integer;
+program useless;
 
-procedure QSort(numbers : array[5] of integer; left : integer; right : integer);
+@defmacro N 1000
+
+type
+	string = array of char;
+	vector = array[3] of real;
+	
+	
 var 
-	pivot, l_ptr, r_ptr : integer;
+	i, j: integer;
+	item: string;
+	
+
+// Fuction allowing power operations
+function powerTo(number, power: integer) : integer;
 
 begin
-	l_ptr := left;
-	r_ptr := right;
-	pivot := numbers[left];
+	result := 1;
+	for i := 1 to power do
+		result:= result * number;
+	return
+end;
 
-	while (left < right) do
-	begin
-		while ((numbers[right] >= pivot) and (left < right)) do
-			right := right - 1;
-			
-		if (left <> right) then
-		begin
-			numbers[left] := numbers[right];
-			left := left + 1
-		end;
+	
+procedure printShoppingList(i : integer; shoppingList: array [N] of string; priceList: array [N] of real; sum : real);
 
-		while ((numbers[left] <= pivot) and (left < right)) do
-			left := left + 1;
-
-		if (left <> right) then
-		begin
-			numbers[right] := numbers[left];
-			right := right - 1
-		end
+begin
+writeString('\n\nShopping list:\n');
+	for j := 0 to i-1 do begin
+		writeInteger(j+1);
+		writeString(':\tItem:\t\"');
+		writeString(shoppingList);
+		writeString('\"\n\tPrice:\t');
+		writeReal(priceList[j]);
+		writeString('€\n\n');
+		shoppingList := shoppingList + 1
 	end;
-
-	numbers[left] := pivot;
-	pivot := left;
-	left := l_ptr;
-	right := r_ptr;
-
-	if (left < pivot) then
-		QSort(numbers, left, pivot-1);
-
-	if (right > pivot) then
-		QSort(numbers, pivot+1, right)
+	writeString("\nTotal Price: ");
+	writeReal(sum);
+	writeString('€\n')
 end;
 
 
+procedure shopping();
+
+var
+	shoppingList: array [N] of string;
+	priceList: array [N] of real;
+	tempString: string;
+	sum : real;
+	exit: integer;
+	
 begin
-	writeString("How many numbers?\n");
-	size := readInteger();
-	cnt := 0;
-	while (cnt < size) do
-	begin
-	writeString("Give number\n");
-	numbersgiven[cnt] := readInteger();
-	cnt := cnt + 1
+	i := 0;
+	sum := 0;
+	exit := 1;
+	while (exit <> 0) do begin
+		writeString("Give me an item: ");
+		tempString := readString();
+		shoppingList[i] := tempString;
+		writeString("\n");
+		writeString("Give me its price in €: ");
+		priceList[i] := readReal();
+		writeString("\n");
+		sum := sum + priceList[i];
+		i := i + 1;
+		label: writeString("\nPress 1 to add more items or 0 to exit: ");
+		exit := readInteger();
+		writeString("\n");
+		if (exit <> 0 and exit <> 1) then begin
+			writeString("Wrong number!\n");
+			goto label
+		end
 	end;
-	QSort(numbersgiven, 0, size-1)
+	
+	printShoppingList(i, shoppingList, priceList, sum)
+end;
+
+	
+	
+begin
+	writeString('5 ^ 3 = ');
+	writeInteger(powerTo(5, 3));
+	writeString('\n\n');
+	
+	shopping()
+	
 end.

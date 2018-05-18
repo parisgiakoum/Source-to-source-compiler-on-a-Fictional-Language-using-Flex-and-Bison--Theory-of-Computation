@@ -96,7 +96,7 @@ begin
 		writeInteger(i);
 		writeString("\n");
 		i := (integer) i-1
-	end until (i >= 0);
+	end until (i < 0);
 	
 	testar2 := readString();
 	writeString(testar2);

@@ -1,57 +1,87 @@
 #include "ptuclib.h"
 
 
-/* Program quicksort */ 
+/* Program useless */ 
 
 /* Type declaration: */
+typedef char* string;
+typedef double vector[3];
 
 /* Variable declaration: */
-int cnt, size;
-int numbersgiven[5];
+int i, j;
+string item;
 
 /* Function declaration: */
-void QSort(int numbers[5], int left, int right)
+int powerTo(int number, int power)
 {
-int pivot, l_ptr, r_ptr;
+	int result;
+		
+	result = 1;
+	for (i = 1; i <= power; i++) result = result * number;
+	return result;
+}
 
+void printShoppingList(int i, string shoppingList[1000], double priceList[1000], double sum)
+{
+		
+	writeString("\n\nShopping list:\n");
+	for (j = 0; j <= i - 1; j++) 
+	{
+	writeInteger(j + 1);
+	writeString(":\tItem:\t\"");
+	writeString(shoppingList);
+	writeString("\"\n\tPrice:\t");
+	writeReal(priceList[j]);
+	writeString("€\n\n");
+	shoppingList = shoppingList + 1;
+	}
+	writeString("\nTotal Price: ");
+	writeReal(sum);
+	writeString("€\n");
+}
 
-l_ptr = left;
-r_ptr = right;
-pivot = numbers[left];
-while ((left < right)) {
-while (((numbers[right] >= pivot) && (left < right))) right = right - 1;
-if ((left != right))
+void shopping()
 {
-numbers[left] = numbers[right];
-left = left + 1;
-}
-while (((numbers[left] <= pivot) && (left < right))) left = left + 1;
-if ((left != right))
-{
-numbers[right] = numbers[left];
-right = right - 1;
-}
-}
-numbers[left] = pivot;
-pivot = left;
-left = l_ptr;
-right = r_ptr;
-if ((left < pivot))
-QSort(numbers,left,pivot - 1);
-if ((right > pivot))
-QSort(numbers,pivot + 1,right);
+		string shoppingList[1000];
+double priceList[1000];
+string tempString;
+double sum;
+int exit;
+
+	i = 0;
+	sum = 0;
+	exit = 1;
+	while ((exit != 0)) 
+	{
+	writeString("Give me an item: ");
+	scanf("%s", &tempString);
+	shoppingList[i] = tempString;
+	writeString("\n");
+	writeString("Give me its price in €: ");
+	scanf("%lf", &priceList[i]);
+	writeString("\n");
+	sum = sum + priceList[i];
+	i = i + 1;
+	label:writeString("\nPress 1 to add more items or 0 to exit: ");
+	scanf("%d", &exit);
+	writeString("\n");
+	if ((exit != 0 && exit != 1)) 
+	{
+	writeString("Wrong number!\n");
+	goto label;
+	}
+	}
+	printShoppingList(i,shoppingList,priceList,sum);
 }
 
 /* Main: */
 int main() {
-writeString("How many numbers?\n");
-scanf("%d", &size);
-cnt = 0;
-while ((cnt < size)) {
-writeString("Give number\n");
-scanf("%d", &numbersgiven[cnt]);
-cnt = cnt + 1;
-}
-QSort(numbersgiven,0,size - 1);
+	writeString("5 ^ 3 = ");
+	writeInteger(powerTo(5,3));
+	writeString("\n\n");
+	shopping();
+
+return 0;
+
 }
  
