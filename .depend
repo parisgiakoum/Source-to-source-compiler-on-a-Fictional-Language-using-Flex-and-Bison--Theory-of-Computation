@@ -1,2 +1,1 @@
-ptucc_scan.o: ptucc_scan.c
 cgen.o: cgen.c cgen.h

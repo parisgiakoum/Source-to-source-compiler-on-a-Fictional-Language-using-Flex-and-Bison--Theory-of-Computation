@@ -1502,8 +1502,8 @@ yyreduce:
 	if(yyerror_count==0) {
 		puts(c_prologue);
 		printf("/* Program %s */ \n\n", (yyvsp[-5].crepr));
-		printf("/* Type declaration: */\n%s\n", (yyvsp[-4].crepr));
-		printf("/* Variable declaration: */\n%s\n", (yyvsp[-3].crepr));
+		printf("/* Type declaration: */\n%s", (yyvsp[-4].crepr));
+		printf("/* Variable declaration: */\n%s", (yyvsp[-3].crepr));
 		printf("/* Function declaration: */\n%s", (yyvsp[-2].crepr));
 		printf("/* Main: */\nint main() %s \n", (yyvsp[-1].crepr));
 	}
@@ -1519,7 +1519,7 @@ yyreduce:
 
   case 4:
 #line 132 "ptucc_parser.y" /* yacc.c:1646  */
-    { (yyval.crepr) = template("{\n\t%s\nreturn 0;\n\n}\n", (yyvsp[-1].crepr)); }
+    { (yyval.crepr) = template("{\n\t%s\n\treturn 0;\n}\n", (yyvsp[-1].crepr)); }
 #line 1524 "ptucc_parser.tab.c" /* yacc.c:1646  */
     break;
 
@@ -1639,25 +1639,25 @@ yyreduce:
 
   case 25:
 #line 162 "ptucc_parser.y" /* yacc.c:1646  */
-    { (yyval.crepr) = template("(int)%s", (yyvsp[0].crepr)); }
+    { (yyval.crepr) = template("(int) %s", (yyvsp[0].crepr)); }
 #line 1644 "ptucc_parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 26:
 #line 163 "ptucc_parser.y" /* yacc.c:1646  */
-    { (yyval.crepr) = template("(int)%s", (yyvsp[0].crepr)); }
+    { (yyval.crepr) = template("(int) %s", (yyvsp[0].crepr)); }
 #line 1650 "ptucc_parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 27:
 #line 164 "ptucc_parser.y" /* yacc.c:1646  */
-    { (yyval.crepr) = template("(char)%s", (yyvsp[0].crepr)); }
+    { (yyval.crepr) = template("(char) %s", (yyvsp[0].crepr)); }
 #line 1656 "ptucc_parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 28:
 #line 165 "ptucc_parser.y" /* yacc.c:1646  */
-    { (yyval.crepr) = template("(double)%s", (yyvsp[0].crepr)); }
+    { (yyval.crepr) = template("(double) %s", (yyvsp[0].crepr)); }
 #line 1662 "ptucc_parser.tab.c" /* yacc.c:1646  */
     break;
 
@@ -1825,7 +1825,7 @@ yyreduce:
 
   case 56:
 #line 197 "ptucc_parser.y" /* yacc.c:1646  */
-    { (yyval.crepr) = (yyvsp[0].crepr); }
+    { (yyval.crepr) = template("%s\n", (yyvsp[0].crepr)); }
 #line 1830 "ptucc_parser.tab.c" /* yacc.c:1646  */
     break;
 
@@ -1843,25 +1843,25 @@ yyreduce:
 
   case 59:
 #line 202 "ptucc_parser.y" /* yacc.c:1646  */
-    { (yyval.crepr) = template("typedef %s %s;\n", (yyvsp[-1].crepr), (yyvsp[-3].crepr)); }
+    { (yyval.crepr) = template("\ttypedef %s %s;\n", (yyvsp[-1].crepr), (yyvsp[-3].crepr)); }
 #line 1848 "ptucc_parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 60:
 #line 203 "ptucc_parser.y" /* yacc.c:1646  */
-    { (yyval.crepr) = template("typedef %s %s%s;\n", (yyvsp[-1].crepr), (yyvsp[-6].crepr), (yyvsp[-3].crepr)); }
+    { (yyval.crepr) = template("\ttypedef %s %s%s;\n", (yyvsp[-1].crepr), (yyvsp[-6].crepr), (yyvsp[-3].crepr)); }
 #line 1854 "ptucc_parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 61:
 #line 204 "ptucc_parser.y" /* yacc.c:1646  */
-    { (yyval.crepr) = template("typedef %s (*%s)(%s);\n", (yyvsp[-1].crepr), (yyvsp[-8].crepr), (yyvsp[-4].crepr)); }
+    { (yyval.crepr) = template("\ttypedef %s (*%s)(%s);\n", (yyvsp[-1].crepr), (yyvsp[-8].crepr), (yyvsp[-4].crepr)); }
 #line 1860 "ptucc_parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 62:
 #line 205 "ptucc_parser.y" /* yacc.c:1646  */
-    { (yyval.crepr) = template("typedef %s (*%s)();\n", (yyvsp[-1].crepr), (yyvsp[-7].crepr)); }
+    { (yyval.crepr) = template("\ttypedef %s (*%s)();\n", (yyvsp[-1].crepr), (yyvsp[-7].crepr)); }
 #line 1866 "ptucc_parser.tab.c" /* yacc.c:1646  */
     break;
 
@@ -1873,7 +1873,7 @@ yyreduce:
 
   case 64:
 #line 208 "ptucc_parser.y" /* yacc.c:1646  */
-    { (yyval.crepr) = (yyvsp[-1].crepr); }
+    { (yyval.crepr) = template("%s\n", (yyvsp[-1].crepr)); }
 #line 1878 "ptucc_parser.tab.c" /* yacc.c:1646  */
     break;
 
@@ -1891,25 +1891,25 @@ yyreduce:
 
   case 67:
 #line 213 "ptucc_parser.y" /* yacc.c:1646  */
-    { (yyval.crepr) = template("%s %s;\n", (yyvsp[0].crepr), (yyvsp[-2].crepr)); }
+    { (yyval.crepr) = template("\t%s %s;\n", (yyvsp[0].crepr), (yyvsp[-2].crepr)); }
 #line 1896 "ptucc_parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 68:
 #line 214 "ptucc_parser.y" /* yacc.c:1646  */
-    { (yyval.crepr) = template("%s %s%s;\n", (yyvsp[0].crepr), (yyvsp[-5].crepr), (yyvsp[-2].crepr)); }
+    { (yyval.crepr) = template("\t%s %s%s;\n", (yyvsp[0].crepr), (yyvsp[-5].crepr), (yyvsp[-2].crepr)); }
 #line 1902 "ptucc_parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 69:
 #line 215 "ptucc_parser.y" /* yacc.c:1646  */
-    { (yyval.crepr) = template("%s (*%s)(%s);\n", (yyvsp[0].crepr), (yyvsp[-7].crepr), (yyvsp[-3].crepr)); }
+    { (yyval.crepr) = template("\t%s (*%s)(%s);\n", (yyvsp[0].crepr), (yyvsp[-7].crepr), (yyvsp[-3].crepr)); }
 #line 1908 "ptucc_parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 70:
 #line 216 "ptucc_parser.y" /* yacc.c:1646  */
-    { (yyval.crepr) = template("%s (*%s)();\n", (yyvsp[0].crepr), (yyvsp[-6].crepr)); }
+    { (yyval.crepr) = template("\t%s (*%s)();\n", (yyvsp[0].crepr), (yyvsp[-6].crepr)); }
 #line 1914 "ptucc_parser.tab.c" /* yacc.c:1646  */
     break;
 
@@ -1927,7 +1927,7 @@ yyreduce:
 
   case 73:
 #line 221 "ptucc_parser.y" /* yacc.c:1646  */
-    { (yyval.crepr) = template("%s\t%s\t%s\n\t%s%s}\n\n", (yyvsp[-5].crepr), (yyvsp[-4].crepr), (yyvsp[-3].crepr), (yyvsp[-2].crepr), (yyvsp[-1].crepr)); }
+    { (yyval.crepr) = template("%s%s%s\t%s%s}\n\n", (yyvsp[-5].crepr), (yyvsp[-4].crepr), (yyvsp[-3].crepr), (yyvsp[-2].crepr), (yyvsp[-1].crepr)); }
 #line 1932 "ptucc_parser.tab.c" /* yacc.c:1646  */
     break;
 

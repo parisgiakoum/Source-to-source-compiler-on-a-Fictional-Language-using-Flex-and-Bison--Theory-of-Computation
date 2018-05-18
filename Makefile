@@ -68,6 +68,56 @@ test: ptucc
 	gcc -Wall -std=c11 -o mysample mysample.c
 	./mysample
 	
+sample001: ptucc
+	./ptucc < sample001.fl > sample001.c
+	gcc -Wall -std=c11 -o sample001 sample001.c
+	./sample001
+	
+sample002: ptucc
+	./ptucc < sample002.fl > sample002.c
+	gcc -Wall -std=c11 -o sample002 sample002.c
+	./sample002
+	
+sample003: ptucc
+	./ptucc < sample003.fl > sample003.c
+	gcc -Wall -std=c11 -o sample003 sample003.c
+	./sample003
+	
+sample004: ptucc
+	./ptucc < sample004.fl > sample004.c
+	gcc -Wall -std=c11 -o sample004 sample004.c
+	./sample004
+	
+sample005: ptucc
+	./ptucc < sample005.fl > sample005.c
+	gcc -Wall -std=c11 -o sample005 sample005.c
+	./sample005
+	
+sample006: ptucc
+	./ptucc < sample006.fl > sample006.c
+	gcc -Wall -std=c11 -o sample006 sample006.c
+	./sample006
+	
+sample007: ptucc
+	./ptucc < sample007.fl > sample007.c
+	gcc -Wall -std=c11 -o sample007 sample007.c
+	./sample007
+	
+sample008: ptucc
+	./ptucc < sample008.fl > sample008.c
+	gcc -Wall -std=c11 -o sample008 sample008.c
+	./sample008
+
+correct1: ptucc
+	./ptucc < correct1.fl > correct1.c
+	gcc -Wall -std=c11 -o correct1 correct1.c
+	./correct1
+	
+correct2: ptucc
+	./ptucc < correct2.fl > correct2.c
+	gcc -Wall -std=c11 -o correct2 correct2.c
+	./correct2
+
 #-----------------------------------------------------
 # Build control
 #-----------------------------------------------------

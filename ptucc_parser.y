@@ -119,8 +119,8 @@ program:  program_decl type_declaration var_declaration subroutine_decl_list mai
 	if(yyerror_count==0) {
 		puts(c_prologue);
 		printf("/* Program %s */ \n\n", $1);
-		printf("/* Type declaration: */\n%s\n", $2);
-		printf("/* Variable declaration: */\n%s\n", $3);
+		printf("/* Type declaration: */\n%s", $2);
+		printf("/* Variable declaration: */\n%s", $3);
 		printf("/* Function declaration: */\n%s", $4);
 		printf("/* Main: */\nint main() %s \n", $5);
 	}
@@ -129,7 +129,7 @@ program:  program_decl type_declaration var_declaration subroutine_decl_list mai
 
 program_decl : KW_PROGRAM IDENT ';'  																		{ $$ = $2; };
 
-main_body : KW_BEGIN statements KW_END   																	{ $$ = template("{\n\t%s\nreturn 0;\n\n}\n", $2); };
+main_body : KW_BEGIN statements KW_END   																	{ $$ = template("{\n\t%s\n\treturn 0;\n}\n", $2); };
 
 body : KW_BEGIN statements KW_END   																		{ $$ = template("\n\t{\n\t%s\t}\n", $2); };
 
@@ -159,10 +159,10 @@ expression: POSINT 																							{ $$ = template("%s",$1); };
           | KW_FALSE																						{ $$ = template("0"); };
           | STRING 																							{ $$ = string_ptuc2c($1); };
 		  | '(' expression ')'																				{ $$ = template("(%s)", $2); };
-		  | CAST_INTEGER expression																			{ $$ = template("(int)%s", $2); };
-		  | CAST_BOOLEAN expression																			{ $$ = template("(int)%s", $2); };
-		  | CAST_CHAR expression																			{ $$ = template("(char)%s", $2); };
-		  | CAST_REAL expression																			{ $$ = template("(double)%s", $2); };
+		  | CAST_INTEGER expression																			{ $$ = template("(int) %s", $2); };
+		  | CAST_BOOLEAN expression																			{ $$ = template("(int) %s", $2); };
+		  | CAST_CHAR expression																			{ $$ = template("(char) %s", $2); };
+		  | CAST_REAL expression																			{ $$ = template("(double) %s", $2); };
 		  |	expression '+' expression																		{ $$ = template("%s + %s", $1, $3); };
 		  | expression '-' expression																		{ $$ = template("%s - %s", $1, $3); };
 		  | expression '*' expression																		{ $$ = template("%s * %s", $1, $3); };
@@ -194,31 +194,31 @@ basic_data_type: KW_INTEGER																					{ $$ = template("int"); };
 array_of_type: KW_ARRAY KW_OF basic_data_type																{ $$ = template("%s*", $3); };
 		  
 type_declaration: 																							{ $$ = ""; }
-		        | KW_TYPE type_decl_list																	{ $$ = $2; };
+		        | KW_TYPE type_decl_list																	{ $$ = template("%s\n", $2); };
 		 
 type_decl_list: type_decl																					{ $$ = $1; };
 			  | type_decl_list type_decl																	{ $$ = template("%s%s", $1, $2);  };
 		 
-type_decl: IDENT '=' data_type ';'																			{ $$ = template("typedef %s %s;\n", $3, $1); };
-		 | IDENT '=' KW_ARRAY array_size KW_OF basic_data_type ';'											{ $$ = template("typedef %s %s%s;\n", $6, $1, $4); };
-		 | IDENT '=' KW_FUNCTION '(' sub_arg_decl_list ')' ':' data_type ';'								{ $$ = template("typedef %s (*%s)(%s);\n", $8, $1, $5); };
-		 | IDENT '=' KW_FUNCTION '(' ')' ':' data_type ';'													{ $$ = template("typedef %s (*%s)();\n", $7, $1); };
+type_decl: IDENT '=' data_type ';'																			{ $$ = template("\ttypedef %s %s;\n", $3, $1); };
+		 | IDENT '=' KW_ARRAY array_size KW_OF basic_data_type ';'											{ $$ = template("\ttypedef %s %s%s;\n", $6, $1, $4); };
+		 | IDENT '=' KW_FUNCTION '(' sub_arg_decl_list ')' ':' data_type ';'								{ $$ = template("\ttypedef %s (*%s)(%s);\n", $8, $1, $5); };
+		 | IDENT '=' KW_FUNCTION '(' ')' ':' data_type ';'													{ $$ = template("\ttypedef %s (*%s)();\n", $7, $1); };
 			  
 var_declaration:									{ $$ = ""; };
-			   | KW_VAR var_decl_list ';'			{ $$ = $2; };
+			   | KW_VAR var_decl_list ';'			{ $$ = template("%s\n", $2); };
 		
 var_decl_list: var_decl									{ $$ = $1; };
 			 | var_decl_list ';' var_decl				{ $$ = template("%s%s", $1, $3);  };
 
-var_decl: var_ident ':' data_type																			{ $$ = template("%s %s;\n", $3, $1); };
-		| var_ident ':' KW_ARRAY array_size KW_OF basic_data_type 											{ $$ = template("%s %s%s;\n", $6, $1, $4); };
-		| var_ident ':' KW_FUNCTION '(' sub_arg_decl_list ')' ':' data_type 								{ $$ = template("%s (*%s)(%s);\n", $8, $1, $5); };
-		| var_ident ':'	KW_FUNCTION '(' ')' ':' data_type 													{ $$ = template("%s (*%s)();\n", $7, $1); };
+var_decl: var_ident ':' data_type																			{ $$ = template("\t%s %s;\n", $3, $1); };
+		| var_ident ':' KW_ARRAY array_size KW_OF basic_data_type 											{ $$ = template("\t%s %s%s;\n", $6, $1, $4); };
+		| var_ident ':' KW_FUNCTION '(' sub_arg_decl_list ')' ':' data_type 								{ $$ = template("\t%s (*%s)(%s);\n", $8, $1, $5); };
+		| var_ident ':'	KW_FUNCTION '(' ')' ':' data_type 													{ $$ = template("\t%s (*%s)();\n", $7, $1); };
 			
 subroutine_decl_list:	 																					{ $$ = ""; };
 					  | subroutine_decl_list subroutine														{ $$ = template("%s%s", $1, $2);  };
 					  
-subroutine: subroutine_decl type_declaration var_declaration subroutine_decl_list subroutine_body ';'		{ $$ = template("%s\t%s\t%s\n\t%s%s}\n\n", $1, $2, $3, $4, $5); };
+subroutine: subroutine_decl type_declaration var_declaration subroutine_decl_list subroutine_body ';'		{ $$ = template("%s%s%s\t%s%s}\n\n", $1, $2, $3, $4, $5); };
 
 subroutine_decl: KW_PROCEDURE IDENT '(' sub_arg_decl_list ')' ';'											{ $$ = template("void %s(%s)\n{\n", $2, $4);  };
 			   | KW_PROCEDURE IDENT '(' ')' ';'																{ $$ = template("void %s()\n{\n", $2);  };

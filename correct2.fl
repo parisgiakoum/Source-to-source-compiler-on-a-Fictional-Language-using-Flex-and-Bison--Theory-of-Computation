@@ -6,8 +6,6 @@ program useless;
 
 type
 	string = array of char;
-	vector = array[3] of real;
-	
 	
 var 
 	i, j: integer;
@@ -15,15 +13,25 @@ var
 	
 
 // Fuction allowing power operations
-function powerTo(number, power: integer) : integer;
+function powerTo(number: real; power: integer) : real;
 
 begin
 	result := 1;
-	for i := 1 to power do
-		result:= result * number;
+	if power > 0 then begin
+		for i := 0 to power-1 do
+			result := result * number
+	end
+	else if power < 0 then begin
+		for i := 0 downto power+1 do 
+			result:= (real) result/number
+	end
+	else begin
+		if power = 0 then result := 1
+		else result := 0
+	end;
+	if result > 0 and number < 0 then result := -result;
 	return
 end;
-
 	
 procedure printShoppingList(i : integer; shoppingList: array [N] of string; priceList: array [N] of real; sum : real);
 
@@ -51,13 +59,13 @@ var
 	priceList: array [N] of real;
 	tempString: string;
 	sum : real;
-	exit: integer;
+	exit: char;
 	
 begin
 	i := 0;
 	sum := 0;
-	exit := 1;
-	while (exit <> 0) do begin
+	exit := "N";
+	while (exit <> 'Y' and exit <> 'y') do begin
 		writeString("Give me an item: ");
 		tempString := readString();
 		shoppingList[i] := tempString;
@@ -67,11 +75,11 @@ begin
 		writeString("\n");
 		sum := sum + priceList[i];
 		i := i + 1;
-		label: writeString("\nPress 1 to add more items or 0 to exit: ");
-		exit := readInteger();
+		label: writeString("\nexit? y/n: ");
+		exit := readString();
 		writeString("\n");
-		if (exit <> 0 and exit <> 1) then begin
-			writeString("Wrong number!\n");
+		if (exit <> 'y' and exit <> 'Y' and exit <> 'N' and exit <> 'n') then begin
+			writeString("Wrong input!\n");
 			goto label
 		end
 	end;
@@ -79,13 +87,43 @@ begin
 	printShoppingList(i, shoppingList, priceList, sum)
 end;
 
+
+procedure menu();
+var
+	power: function(x:real; y: integer): real;
+	choice, temp2: integer;
+	temp1: real;
+begin
+	lbl: choice := -1;
+	writeString('\nMenu:\nSelect equivalent option:\n\t1: Power operation\n\t2: Make a shopping list!\n\t3: Exit\n\nChoice: ');
+	lbl2: choice := readInteger();
+	if choice > 3 || choice < 1 then begin
+		writeString('\nWrong choice! Try again: ');
+		goto lbl2
+	end;
+	if choice = 1 then begin
+		writeString("\nGive me the base(positive or negative number): ");
+		temp1 := readReal();
+		writeString("\nGive me the power(positive or negative integer): ");
+		temp2 := readInteger();
+		writeString('\n');
+		writeReal(temp1);
+		writeString(' ^ ');
+		writeInteger(temp2);
+		writeString(' = ');
+		power := powerTo;
+		writeReal(power(temp1, temp2));
+		writeString('\n');
+		goto lbl
+	end
+	else if choice = 2 then begin
+		shopping();
+		goto lbl
+	end
+	else writeString('\nHope to see you again!\n')
+end;
 	
 	
 begin
-	writeString('5 ^ 3 = ');
-	writeInteger(powerTo(5, 3));
-	writeString('\n\n');
-	
-	shopping()
-	
+	menu()	
 end.

@@ -4,26 +4,36 @@
 /* Program useless */ 
 
 /* Type declaration: */
-typedef char* string;
-typedef double vector[3];
+	typedef char* string;
 
 /* Variable declaration: */
-int i, j;
-string item;
+	int i, j;
+	string item;
 
 /* Function declaration: */
-int powerTo(int number, int power)
+double powerTo(double number, int power)
 {
-	int result;
-		
+	double result;
 	result = 1;
-	for (i = 1; i <= power; i++) result = result * number;
+	if (power > 0) 
+	{
+	for (i = 0; i <= power - 1; i++) result = result * number;
+	}
+	else if (power < 0) 
+	{
+	for (i = 0; i >= power + 1; i--) result = (double) result / number;
+	}
+	else 
+	{
+	if (power == 0) result = 1;
+	else result = 0;
+	}
+	if (result > 0 && number < 0) result = -result;
 	return result;
 }
 
 void printShoppingList(int i, string shoppingList[1000], double priceList[1000], double sum)
 {
-		
 	writeString("\n\nShopping list:\n");
 	for (j = 0; j <= i - 1; j++) 
 	{
@@ -42,16 +52,16 @@ void printShoppingList(int i, string shoppingList[1000], double priceList[1000],
 
 void shopping()
 {
-		string shoppingList[1000];
-double priceList[1000];
-string tempString;
-double sum;
-int exit;
+	string shoppingList[1000];
+	double priceList[1000];
+	string tempString;
+	double sum;
+	char exit;
 
 	i = 0;
 	sum = 0;
-	exit = 1;
-	while ((exit != 0)) 
+	exit = 'N';
+	while ((exit != 'Y' && exit != 'y')) 
 	{
 	writeString("Give me an item: ");
 	scanf("%s", &tempString);
@@ -62,26 +72,60 @@ int exit;
 	writeString("\n");
 	sum = sum + priceList[i];
 	i = i + 1;
-	label:writeString("\nPress 1 to add more items or 0 to exit: ");
-	scanf("%d", &exit);
+	label:writeString("\nexit? y/n: ");
+	scanf("%s", &exit);
 	writeString("\n");
-	if ((exit != 0 && exit != 1)) 
+	if ((exit != 'y' && exit != 'Y' && exit != 'N' && exit != 'n')) 
 	{
-	writeString("Wrong number!\n");
+	writeString("Wrong input!\n");
 	goto label;
 	}
 	}
 	printShoppingList(i,shoppingList,priceList,sum);
 }
 
+void menu()
+{
+	double (*power)(double x, int y);
+	int choice, temp2;
+	double temp1;
+
+	lbl:choice = -1;
+	writeString("\nMenu:\nSelect equivalent option:\n\t1: Power operation\n\t2: Make a shopping list!\n\t3: Exit\n\nChoice: ");
+	lbl2:scanf("%d", &choice);
+	if (choice > 3 || choice < 1) 
+	{
+	writeString("\nWrong choice! Try again: ");
+	goto lbl2;
+	}
+	if (choice == 1) 
+	{
+	writeString("\nGive me the base(positive or negative number): ");
+	scanf("%lf", &temp1);
+	writeString("\nGive me the power(positive or negative integer): ");
+	scanf("%d", &temp2);
+	writeString("\n");
+	writeReal(temp1);
+	writeString(" ^ ");
+	writeInteger(temp2);
+	writeString(" = ");
+	power = powerTo;
+	writeReal(power(temp1,temp2));
+	writeString("\n");
+	goto lbl;
+	}
+	else if (choice == 2) 
+	{
+	shopping();
+	goto lbl;
+	}
+	else writeString("\nHope to see you again!\n");
+}
+
 /* Main: */
 int main() {
-	writeString("5 ^ 3 = ");
-	writeInteger(powerTo(5,3));
-	writeString("\n\n");
-	shopping();
+	menu();
 
-return 0;
-
+	return 0;
 }
  

@@ -1,6 +1,3 @@
-State 198 conflicts: 1 shift/reduce
-
-
 Grammar
 
     0 $accept: program $end
@@ -288,6 +285,8 @@ instruction (98)
 State 0
 
     0 $accept: . program $end
+    1 program: . program_decl type_declaration var_declaration subroutine_decl_list main_body '.'
+    2 program_decl: . KW_PROGRAM IDENT ';'
 
     KW_PROGRAM  shift, and go to state 1
 
@@ -312,6 +311,8 @@ State 2
 State 3
 
     1 program: program_decl . type_declaration var_declaration subroutine_decl_list main_body '.'
+   54 type_declaration: . %empty  [KW_BEGIN, KW_FUNCTION, KW_PROCEDURE, KW_VAR]
+   55                 | . KW_TYPE type_decl_list
 
     KW_TYPE  shift, and go to state 6
 
@@ -337,6 +338,12 @@ State 5
 State 6
 
    55 type_declaration: KW_TYPE . type_decl_list
+   56 type_decl_list: . type_decl
+   57               | . type_decl_list type_decl
+   58 type_decl: . IDENT '=' data_type ';'
+   59          | . IDENT '=' KW_ARRAY array_size KW_OF basic_data_type ';'
+   60          | . IDENT '=' KW_FUNCTION '(' sub_arg_decl_list ')' ':' data_type ';'
+   61          | . IDENT '=' KW_FUNCTION '(' ')' ':' data_type ';'
 
     IDENT  shift, and go to state 9
 
@@ -347,6 +354,8 @@ State 6
 State 7
 
     1 program: program_decl type_declaration . var_declaration subroutine_decl_list main_body '.'
+   62 var_declaration: . %empty  [KW_BEGIN, KW_FUNCTION, KW_PROCEDURE]
+   63                | . KW_VAR var_decl_list ';'
 
     KW_VAR  shift, and go to state 12
 
@@ -374,8 +383,12 @@ State 9
 
 State 10
 
-   55 type_declaration: KW_TYPE type_decl_list .
+   55 type_declaration: KW_TYPE type_decl_list .  [KW_BEGIN, KW_FUNCTION, KW_PROCEDURE, KW_VAR]
    57 type_decl_list: type_decl_list . type_decl
+   58 type_decl: . IDENT '=' data_type ';'
+   59          | . IDENT '=' KW_ARRAY array_size KW_OF basic_data_type ';'
+   60          | . IDENT '=' KW_FUNCTION '(' sub_arg_decl_list ')' ':' data_type ';'
+   61          | . IDENT '=' KW_FUNCTION '(' ')' ':' data_type ';'
 
     IDENT  shift, and go to state 9
 
@@ -394,6 +407,14 @@ State 11
 State 12
 
    63 var_declaration: KW_VAR . var_decl_list ';'
+   64 var_decl_list: . var_decl
+   65              | . var_decl_list ';' var_decl
+   66 var_decl: . var_ident ':' data_type
+   67         | . var_ident ':' KW_ARRAY array_size KW_OF basic_data_type
+   68         | . var_ident ':' KW_FUNCTION '(' sub_arg_decl_list ')' ':' data_type
+   69         | . var_ident ':' KW_FUNCTION '(' ')' ':' data_type
+   84 var_ident: . IDENT
+   85          | . IDENT ',' var_ident
 
     IDENT  shift, and go to state 16
 
@@ -405,6 +426,8 @@ State 12
 State 13
 
     1 program: program_decl type_declaration var_declaration . subroutine_decl_list main_body '.'
+   70 subroutine_decl_list: . %empty
+   71                     | . subroutine_decl_list subroutine
 
     $default  reduce using rule 70 (subroutine_decl_list)
 
@@ -413,6 +436,14 @@ State 13
 
 State 14
 
+   46 data_type: . basic_data_type
+   47          | . array_of_type
+   48 basic_data_type: . KW_INTEGER
+   49                | . KW_BOOLEAN
+   50                | . KW_CHAR
+   51                | . KW_REAL
+   52                | . IDENT
+   53 array_of_type: . KW_ARRAY KW_OF basic_data_type
    58 type_decl: IDENT '=' . data_type ';'
    59          | IDENT '=' . KW_ARRAY array_size KW_OF basic_data_type ';'
    60          | IDENT '=' . KW_FUNCTION '(' sub_arg_decl_list ')' ':' data_type ';'
@@ -440,7 +471,7 @@ State 15
 
 State 16
 
-   84 var_ident: IDENT .
+   84 var_ident: IDENT .  [':']
    85          | IDENT . ',' var_ident
 
     ','  shift, and go to state 31
@@ -476,7 +507,13 @@ State 19
 State 20
 
     1 program: program_decl type_declaration var_declaration subroutine_decl_list . main_body '.'
+    3 main_body: . KW_BEGIN statements KW_END
    71 subroutine_decl_list: subroutine_decl_list . subroutine
+   72 subroutine: . subroutine_decl type_declaration var_declaration subroutine_decl_list subroutine_body ';'
+   73 subroutine_decl: . KW_PROCEDURE IDENT '(' sub_arg_decl_list ')' ';'
+   74                | . KW_PROCEDURE IDENT '(' ')' ';'
+   75                | . KW_FUNCTION IDENT '(' sub_arg_decl_list ')' ':' data_type ';'
+   76                | . KW_FUNCTION IDENT '(' ')' ':' data_type ';'
 
     KW_BEGIN      shift, and go to state 34
     KW_FUNCTION   shift, and go to state 35
@@ -506,6 +543,8 @@ State 23
 
    53 array_of_type: KW_ARRAY . KW_OF basic_data_type
    59 type_decl: IDENT '=' KW_ARRAY . array_size KW_OF basic_data_type ';'
+   88 array_size: . '[' expression ']'
+   89           | . '[' expression ']' array_size
 
     KW_OF  shift, and go to state 41
     '['    shift, and go to state 42
@@ -564,7 +603,9 @@ State 30
 
 State 31
 
-   85 var_ident: IDENT ',' . var_ident
+   84 var_ident: . IDENT
+   85          | . IDENT ',' var_ident
+   85          | IDENT ',' . var_ident
 
     IDENT  shift, and go to state 16
 
@@ -573,8 +614,14 @@ State 31
 
 State 32
 
-   63 var_declaration: KW_VAR var_decl_list ';' .
+   63 var_declaration: KW_VAR var_decl_list ';' .  [KW_BEGIN, KW_FUNCTION, KW_PROCEDURE]
    65 var_decl_list: var_decl_list ';' . var_decl
+   66 var_decl: . var_ident ':' data_type
+   67         | . var_ident ':' KW_ARRAY array_size KW_OF basic_data_type
+   68         | . var_ident ':' KW_FUNCTION '(' sub_arg_decl_list ')' ':' data_type
+   69         | . var_ident ':' KW_FUNCTION '(' ')' ':' data_type
+   84 var_ident: . IDENT
+   85          | . IDENT ',' var_ident
 
     IDENT  shift, and go to state 16
 
@@ -586,6 +633,14 @@ State 32
 
 State 33
 
+   46 data_type: . basic_data_type
+   47          | . array_of_type
+   48 basic_data_type: . KW_INTEGER
+   49                | . KW_BOOLEAN
+   50                | . KW_CHAR
+   51                | . KW_REAL
+   52                | . IDENT
+   53 array_of_type: . KW_ARRAY KW_OF basic_data_type
    66 var_decl: var_ident ':' . data_type
    67         | var_ident ':' . KW_ARRAY array_size KW_OF basic_data_type
    68         | var_ident ':' . KW_FUNCTION '(' sub_arg_decl_list ')' ':' data_type
@@ -607,6 +662,32 @@ State 33
 State 34
 
     3 main_body: KW_BEGIN . statements KW_END
+    4 body: . KW_BEGIN statements KW_END
+    5 statements: . %empty  [KW_END]
+    6           | . statement_list
+    7 statement_list: . statement
+    8               | . statement_list ';' statement
+    9 statement: . proc_call
+   10          | . instruction
+   11 proc_call: . IDENT '(' arguments ')'
+   90 instruction: . body
+   91            | . IDENT array_call ASSIGN expression
+   92            | . KW_RESULT ASSIGN expression
+   93            | . KW_IF expression KW_THEN statement
+   94            | . KW_IF expression KW_THEN statement KW_ELSE statement
+   95            | . KW_FOR IDENT array_call ASSIGN expression KW_TO expression KW_DO statement
+   96            | . KW_FOR IDENT array_call ASSIGN expression KW_DOWNTO expression KW_DO statement
+   97            | . KW_WHILE expression KW_DO statement
+   98            | . KW_REPEAT statement KW_UNTIL expression
+   99            | . IDENT ':' statement
+  100            | . KW_GOTO IDENT
+  101            | . KW_RETURN
+  102            | . IDENT array_call ASSIGN LIB_RS '(' ')'
+  103            | . IDENT array_call ASSIGN LIB_RI '(' ')'
+  104            | . IDENT array_call ASSIGN LIB_RR '(' ')'
+  105            | . KW_RESULT ASSIGN LIB_RS '(' ')'
+  106            | . KW_RESULT ASSIGN LIB_RI '(' ')'
+  107            | . KW_RESULT ASSIGN LIB_RR '(' ')'
 
     IDENT      shift, and go to state 50
     KW_BEGIN   shift, and go to state 51
@@ -660,6 +741,8 @@ State 38
 
 State 39
 
+   54 type_declaration: . %empty  [KW_BEGIN, KW_FUNCTION, KW_PROCEDURE, KW_VAR]
+   55                 | . KW_TYPE type_decl_list
    72 subroutine: subroutine_decl . type_declaration var_declaration subroutine_decl_list subroutine_body ';'
 
     KW_TYPE  shift, and go to state 6
@@ -673,6 +756,14 @@ State 40
 
    60 type_decl: IDENT '=' KW_FUNCTION '(' . sub_arg_decl_list ')' ':' data_type ';'
    61          | IDENT '=' KW_FUNCTION '(' . ')' ':' data_type ';'
+   77 sub_arg_decl_list: . sub_arg_decl
+   78                  | . sub_arg_decl_list ';' sub_arg_decl
+   79 sub_arg_decl: . var_ident ':' data_type
+   80             | . var_ident ':' KW_ARRAY array_size KW_OF basic_data_type
+   81             | . var_ident ':' KW_FUNCTION '(' sub_arg_decl_list ')' ':' data_type
+   82             | . var_ident ':' KW_FUNCTION '(' ')' ':' data_type
+   84 var_ident: . IDENT
+   85          | . IDENT ',' var_ident
 
     IDENT  shift, and go to state 16
     ')'    shift, and go to state 69
@@ -684,6 +775,11 @@ State 40
 
 State 41
 
+   48 basic_data_type: . KW_INTEGER
+   49                | . KW_BOOLEAN
+   50                | . KW_CHAR
+   51                | . KW_REAL
+   52                | . IDENT
    53 array_of_type: KW_ARRAY KW_OF . basic_data_type
 
     IDENT       shift, and go to state 21
@@ -697,6 +793,37 @@ State 41
 
 State 42
 
+   11 proc_call: . IDENT '(' arguments ')'
+   16 expression: . POSINT
+   17           | . REAL
+   18           | . IDENT array_call
+   19           | . KW_RESULT
+   20           | . KW_TRUE
+   21           | . KW_FALSE
+   22           | . STRING
+   23           | . '(' expression ')'
+   24           | . CAST_INTEGER expression
+   25           | . CAST_BOOLEAN expression
+   26           | . CAST_CHAR expression
+   27           | . CAST_REAL expression
+   28           | . expression '+' expression
+   29           | . expression '-' expression
+   30           | . expression '*' expression
+   31           | . expression '/' expression
+   32           | . expression KW_DIV expression
+   33           | . expression KW_MOD expression
+   34           | . KW_NOT expression
+   35           | . '-' expression
+   36           | . '+' expression
+   37           | . expression '=' expression
+   38           | . expression OP_INEQUAL expression
+   39           | . expression '<' expression
+   40           | . expression '>' expression
+   41           | . expression OP_LESSEQ expression
+   42           | . expression OP_GREATEREQ expression
+   43           | . expression KW_AND expression
+   44           | . expression KW_OR expression
+   45           | . proc_call
    88 array_size: '[' . expression ']'
    89           | '[' . expression ']' array_size
 
@@ -760,6 +887,8 @@ State 48
 
    53 array_of_type: KW_ARRAY . KW_OF basic_data_type
    67 var_decl: var_ident ':' KW_ARRAY . array_size KW_OF basic_data_type
+   88 array_size: . '[' expression ']'
+   89           | . '[' expression ']' array_size
 
     KW_OF  shift, and go to state 41
     '['    shift, and go to state 42
@@ -777,6 +906,10 @@ State 49
 State 50
 
    11 proc_call: IDENT . '(' arguments ')'
+   86 array_call: . %empty  [ASSIGN]
+   87           | . array_size
+   88 array_size: . '[' expression ']'
+   89           | . '[' expression ']' array_size
    91 instruction: IDENT . array_call ASSIGN expression
    99            | IDENT . ':' statement
   102            | IDENT . array_call ASSIGN LIB_RS '(' ')'
@@ -795,7 +928,33 @@ State 50
 
 State 51
 
-    4 body: KW_BEGIN . statements KW_END
+    4 body: . KW_BEGIN statements KW_END
+    4     | KW_BEGIN . statements KW_END
+    5 statements: . %empty  [KW_END]
+    6           | . statement_list
+    7 statement_list: . statement
+    8               | . statement_list ';' statement
+    9 statement: . proc_call
+   10          | . instruction
+   11 proc_call: . IDENT '(' arguments ')'
+   90 instruction: . body
+   91            | . IDENT array_call ASSIGN expression
+   92            | . KW_RESULT ASSIGN expression
+   93            | . KW_IF expression KW_THEN statement
+   94            | . KW_IF expression KW_THEN statement KW_ELSE statement
+   95            | . KW_FOR IDENT array_call ASSIGN expression KW_TO expression KW_DO statement
+   96            | . KW_FOR IDENT array_call ASSIGN expression KW_DOWNTO expression KW_DO statement
+   97            | . KW_WHILE expression KW_DO statement
+   98            | . KW_REPEAT statement KW_UNTIL expression
+   99            | . IDENT ':' statement
+  100            | . KW_GOTO IDENT
+  101            | . KW_RETURN
+  102            | . IDENT array_call ASSIGN LIB_RS '(' ')'
+  103            | . IDENT array_call ASSIGN LIB_RI '(' ')'
+  104            | . IDENT array_call ASSIGN LIB_RR '(' ')'
+  105            | . KW_RESULT ASSIGN LIB_RS '(' ')'
+  106            | . KW_RESULT ASSIGN LIB_RI '(' ')'
+  107            | . KW_RESULT ASSIGN LIB_RR '(' ')'
 
     IDENT      shift, and go to state 50
     KW_BEGIN   shift, and go to state 51
@@ -843,6 +1002,37 @@ State 54
 
 State 55
 
+   11 proc_call: . IDENT '(' arguments ')'
+   16 expression: . POSINT
+   17           | . REAL
+   18           | . IDENT array_call
+   19           | . KW_RESULT
+   20           | . KW_TRUE
+   21           | . KW_FALSE
+   22           | . STRING
+   23           | . '(' expression ')'
+   24           | . CAST_INTEGER expression
+   25           | . CAST_BOOLEAN expression
+   26           | . CAST_CHAR expression
+   27           | . CAST_REAL expression
+   28           | . expression '+' expression
+   29           | . expression '-' expression
+   30           | . expression '*' expression
+   31           | . expression '/' expression
+   32           | . expression KW_DIV expression
+   33           | . expression KW_MOD expression
+   34           | . KW_NOT expression
+   35           | . '-' expression
+   36           | . '+' expression
+   37           | . expression '=' expression
+   38           | . expression OP_INEQUAL expression
+   39           | . expression '<' expression
+   40           | . expression '>' expression
+   41           | . expression OP_LESSEQ expression
+   42           | . expression OP_GREATEREQ expression
+   43           | . expression KW_AND expression
+   44           | . expression KW_OR expression
+   45           | . proc_call
    93 instruction: KW_IF . expression KW_THEN statement
    94            | KW_IF . expression KW_THEN statement KW_ELSE statement
 
@@ -876,7 +1066,29 @@ State 56
 
 State 57
 
-   98 instruction: KW_REPEAT . statement KW_UNTIL expression
+    4 body: . KW_BEGIN statements KW_END
+    9 statement: . proc_call
+   10          | . instruction
+   11 proc_call: . IDENT '(' arguments ')'
+   90 instruction: . body
+   91            | . IDENT array_call ASSIGN expression
+   92            | . KW_RESULT ASSIGN expression
+   93            | . KW_IF expression KW_THEN statement
+   94            | . KW_IF expression KW_THEN statement KW_ELSE statement
+   95            | . KW_FOR IDENT array_call ASSIGN expression KW_TO expression KW_DO statement
+   96            | . KW_FOR IDENT array_call ASSIGN expression KW_DOWNTO expression KW_DO statement
+   97            | . KW_WHILE expression KW_DO statement
+   98            | . KW_REPEAT statement KW_UNTIL expression
+   98            | KW_REPEAT . statement KW_UNTIL expression
+   99            | . IDENT ':' statement
+  100            | . KW_GOTO IDENT
+  101            | . KW_RETURN
+  102            | . IDENT array_call ASSIGN LIB_RS '(' ')'
+  103            | . IDENT array_call ASSIGN LIB_RI '(' ')'
+  104            | . IDENT array_call ASSIGN LIB_RR '(' ')'
+  105            | . KW_RESULT ASSIGN LIB_RS '(' ')'
+  106            | . KW_RESULT ASSIGN LIB_RI '(' ')'
+  107            | . KW_RESULT ASSIGN LIB_RR '(' ')'
 
     IDENT      shift, and go to state 50
     KW_BEGIN   shift, and go to state 51
@@ -896,6 +1108,37 @@ State 57
 
 State 58
 
+   11 proc_call: . IDENT '(' arguments ')'
+   16 expression: . POSINT
+   17           | . REAL
+   18           | . IDENT array_call
+   19           | . KW_RESULT
+   20           | . KW_TRUE
+   21           | . KW_FALSE
+   22           | . STRING
+   23           | . '(' expression ')'
+   24           | . CAST_INTEGER expression
+   25           | . CAST_BOOLEAN expression
+   26           | . CAST_CHAR expression
+   27           | . CAST_REAL expression
+   28           | . expression '+' expression
+   29           | . expression '-' expression
+   30           | . expression '*' expression
+   31           | . expression '/' expression
+   32           | . expression KW_DIV expression
+   33           | . expression KW_MOD expression
+   34           | . KW_NOT expression
+   35           | . '-' expression
+   36           | . '+' expression
+   37           | . expression '=' expression
+   38           | . expression OP_INEQUAL expression
+   39           | . expression '<' expression
+   40           | . expression '>' expression
+   41           | . expression OP_LESSEQ expression
+   42           | . expression OP_GREATEREQ expression
+   43           | . expression KW_AND expression
+   44           | . expression KW_OR expression
+   45           | . proc_call
    97 instruction: KW_WHILE . expression KW_DO statement
 
     IDENT         shift, and go to state 74
@@ -934,7 +1177,7 @@ State 60
 
 State 61
 
-    6 statements: statement_list .
+    6 statements: statement_list .  [KW_END]
     8 statement_list: statement_list . ';' statement
 
     ';'  shift, and go to state 106
@@ -988,6 +1231,8 @@ State 67
 
 State 68
 
+   62 var_declaration: . %empty  [KW_BEGIN, KW_FUNCTION, KW_PROCEDURE]
+   63                | . KW_VAR var_decl_list ';'
    72 subroutine: subroutine_decl type_declaration . var_declaration subroutine_decl_list subroutine_body ';'
 
     KW_VAR  shift, and go to state 12
@@ -1041,6 +1286,10 @@ State 74
 
    11 proc_call: IDENT . '(' arguments ')'
    18 expression: IDENT . array_call
+   86 array_call: . %empty  [KW_END, KW_AND, KW_DIV, KW_MOD, KW_DO, KW_ELSE, KW_THEN, KW_OR, KW_UNTIL, KW_TO, KW_DOWNTO, OP_INEQUAL, OP_LESSEQ, OP_GREATEREQ, '=', '<', '>', '-', '+', '*', '/', ';', ')', ',', ']']
+   87           | . array_size
+   88 array_size: . '[' expression ']'
+   89           | . '[' expression ']' array_size
 
     '('  shift, and go to state 94
     '['  shift, and go to state 42
@@ -1081,7 +1330,38 @@ State 78
 
 State 79
 
-   34 expression: KW_NOT . expression
+   11 proc_call: . IDENT '(' arguments ')'
+   16 expression: . POSINT
+   17           | . REAL
+   18           | . IDENT array_call
+   19           | . KW_RESULT
+   20           | . KW_TRUE
+   21           | . KW_FALSE
+   22           | . STRING
+   23           | . '(' expression ')'
+   24           | . CAST_INTEGER expression
+   25           | . CAST_BOOLEAN expression
+   26           | . CAST_CHAR expression
+   27           | . CAST_REAL expression
+   28           | . expression '+' expression
+   29           | . expression '-' expression
+   30           | . expression '*' expression
+   31           | . expression '/' expression
+   32           | . expression KW_DIV expression
+   33           | . expression KW_MOD expression
+   34           | . KW_NOT expression
+   34           | KW_NOT . expression
+   35           | . '-' expression
+   36           | . '+' expression
+   37           | . expression '=' expression
+   38           | . expression OP_INEQUAL expression
+   39           | . expression '<' expression
+   40           | . expression '>' expression
+   41           | . expression OP_LESSEQ expression
+   42           | . expression OP_GREATEREQ expression
+   43           | . expression KW_AND expression
+   44           | . expression KW_OR expression
+   45           | . proc_call
 
     IDENT         shift, and go to state 74
     POSINT        shift, and go to state 75
@@ -1119,7 +1399,38 @@ State 81
 
 State 82
 
-   24 expression: CAST_INTEGER . expression
+   11 proc_call: . IDENT '(' arguments ')'
+   16 expression: . POSINT
+   17           | . REAL
+   18           | . IDENT array_call
+   19           | . KW_RESULT
+   20           | . KW_TRUE
+   21           | . KW_FALSE
+   22           | . STRING
+   23           | . '(' expression ')'
+   24           | . CAST_INTEGER expression
+   24           | CAST_INTEGER . expression
+   25           | . CAST_BOOLEAN expression
+   26           | . CAST_CHAR expression
+   27           | . CAST_REAL expression
+   28           | . expression '+' expression
+   29           | . expression '-' expression
+   30           | . expression '*' expression
+   31           | . expression '/' expression
+   32           | . expression KW_DIV expression
+   33           | . expression KW_MOD expression
+   34           | . KW_NOT expression
+   35           | . '-' expression
+   36           | . '+' expression
+   37           | . expression '=' expression
+   38           | . expression OP_INEQUAL expression
+   39           | . expression '<' expression
+   40           | . expression '>' expression
+   41           | . expression OP_LESSEQ expression
+   42           | . expression OP_GREATEREQ expression
+   43           | . expression KW_AND expression
+   44           | . expression KW_OR expression
+   45           | . proc_call
 
     IDENT         shift, and go to state 74
     POSINT        shift, and go to state 75
@@ -1143,7 +1454,38 @@ State 82
 
 State 83
 
-   25 expression: CAST_BOOLEAN . expression
+   11 proc_call: . IDENT '(' arguments ')'
+   16 expression: . POSINT
+   17           | . REAL
+   18           | . IDENT array_call
+   19           | . KW_RESULT
+   20           | . KW_TRUE
+   21           | . KW_FALSE
+   22           | . STRING
+   23           | . '(' expression ')'
+   24           | . CAST_INTEGER expression
+   25           | . CAST_BOOLEAN expression
+   25           | CAST_BOOLEAN . expression
+   26           | . CAST_CHAR expression
+   27           | . CAST_REAL expression
+   28           | . expression '+' expression
+   29           | . expression '-' expression
+   30           | . expression '*' expression
+   31           | . expression '/' expression
+   32           | . expression KW_DIV expression
+   33           | . expression KW_MOD expression
+   34           | . KW_NOT expression
+   35           | . '-' expression
+   36           | . '+' expression
+   37           | . expression '=' expression
+   38           | . expression OP_INEQUAL expression
+   39           | . expression '<' expression
+   40           | . expression '>' expression
+   41           | . expression OP_LESSEQ expression
+   42           | . expression OP_GREATEREQ expression
+   43           | . expression KW_AND expression
+   44           | . expression KW_OR expression
+   45           | . proc_call
 
     IDENT         shift, and go to state 74
     POSINT        shift, and go to state 75
@@ -1167,7 +1509,38 @@ State 83
 
 State 84
 
-   26 expression: CAST_CHAR . expression
+   11 proc_call: . IDENT '(' arguments ')'
+   16 expression: . POSINT
+   17           | . REAL
+   18           | . IDENT array_call
+   19           | . KW_RESULT
+   20           | . KW_TRUE
+   21           | . KW_FALSE
+   22           | . STRING
+   23           | . '(' expression ')'
+   24           | . CAST_INTEGER expression
+   25           | . CAST_BOOLEAN expression
+   26           | . CAST_CHAR expression
+   26           | CAST_CHAR . expression
+   27           | . CAST_REAL expression
+   28           | . expression '+' expression
+   29           | . expression '-' expression
+   30           | . expression '*' expression
+   31           | . expression '/' expression
+   32           | . expression KW_DIV expression
+   33           | . expression KW_MOD expression
+   34           | . KW_NOT expression
+   35           | . '-' expression
+   36           | . '+' expression
+   37           | . expression '=' expression
+   38           | . expression OP_INEQUAL expression
+   39           | . expression '<' expression
+   40           | . expression '>' expression
+   41           | . expression OP_LESSEQ expression
+   42           | . expression OP_GREATEREQ expression
+   43           | . expression KW_AND expression
+   44           | . expression KW_OR expression
+   45           | . proc_call
 
     IDENT         shift, and go to state 74
     POSINT        shift, and go to state 75
@@ -1191,7 +1564,38 @@ State 84
 
 State 85
 
-   27 expression: CAST_REAL . expression
+   11 proc_call: . IDENT '(' arguments ')'
+   16 expression: . POSINT
+   17           | . REAL
+   18           | . IDENT array_call
+   19           | . KW_RESULT
+   20           | . KW_TRUE
+   21           | . KW_FALSE
+   22           | . STRING
+   23           | . '(' expression ')'
+   24           | . CAST_INTEGER expression
+   25           | . CAST_BOOLEAN expression
+   26           | . CAST_CHAR expression
+   27           | . CAST_REAL expression
+   27           | CAST_REAL . expression
+   28           | . expression '+' expression
+   29           | . expression '-' expression
+   30           | . expression '*' expression
+   31           | . expression '/' expression
+   32           | . expression KW_DIV expression
+   33           | . expression KW_MOD expression
+   34           | . KW_NOT expression
+   35           | . '-' expression
+   36           | . '+' expression
+   37           | . expression '=' expression
+   38           | . expression OP_INEQUAL expression
+   39           | . expression '<' expression
+   40           | . expression '>' expression
+   41           | . expression OP_LESSEQ expression
+   42           | . expression OP_GREATEREQ expression
+   43           | . expression KW_AND expression
+   44           | . expression KW_OR expression
+   45           | . proc_call
 
     IDENT         shift, and go to state 74
     POSINT        shift, and go to state 75
@@ -1215,7 +1619,38 @@ State 85
 
 State 86
 
-   35 expression: '-' . expression
+   11 proc_call: . IDENT '(' arguments ')'
+   16 expression: . POSINT
+   17           | . REAL
+   18           | . IDENT array_call
+   19           | . KW_RESULT
+   20           | . KW_TRUE
+   21           | . KW_FALSE
+   22           | . STRING
+   23           | . '(' expression ')'
+   24           | . CAST_INTEGER expression
+   25           | . CAST_BOOLEAN expression
+   26           | . CAST_CHAR expression
+   27           | . CAST_REAL expression
+   28           | . expression '+' expression
+   29           | . expression '-' expression
+   30           | . expression '*' expression
+   31           | . expression '/' expression
+   32           | . expression KW_DIV expression
+   33           | . expression KW_MOD expression
+   34           | . KW_NOT expression
+   35           | . '-' expression
+   35           | '-' . expression
+   36           | . '+' expression
+   37           | . expression '=' expression
+   38           | . expression OP_INEQUAL expression
+   39           | . expression '<' expression
+   40           | . expression '>' expression
+   41           | . expression OP_LESSEQ expression
+   42           | . expression OP_GREATEREQ expression
+   43           | . expression KW_AND expression
+   44           | . expression KW_OR expression
+   45           | . proc_call
 
     IDENT         shift, and go to state 74
     POSINT        shift, and go to state 75
@@ -1239,7 +1674,38 @@ State 86
 
 State 87
 
-   36 expression: '+' . expression
+   11 proc_call: . IDENT '(' arguments ')'
+   16 expression: . POSINT
+   17           | . REAL
+   18           | . IDENT array_call
+   19           | . KW_RESULT
+   20           | . KW_TRUE
+   21           | . KW_FALSE
+   22           | . STRING
+   23           | . '(' expression ')'
+   24           | . CAST_INTEGER expression
+   25           | . CAST_BOOLEAN expression
+   26           | . CAST_CHAR expression
+   27           | . CAST_REAL expression
+   28           | . expression '+' expression
+   29           | . expression '-' expression
+   30           | . expression '*' expression
+   31           | . expression '/' expression
+   32           | . expression KW_DIV expression
+   33           | . expression KW_MOD expression
+   34           | . KW_NOT expression
+   35           | . '-' expression
+   36           | . '+' expression
+   36           | '+' . expression
+   37           | . expression '=' expression
+   38           | . expression OP_INEQUAL expression
+   39           | . expression '<' expression
+   40           | . expression '>' expression
+   41           | . expression OP_LESSEQ expression
+   42           | . expression OP_GREATEREQ expression
+   43           | . expression KW_AND expression
+   44           | . expression KW_OR expression
+   45           | . proc_call
 
     IDENT         shift, and go to state 74
     POSINT        shift, and go to state 75
@@ -1263,7 +1729,38 @@ State 87
 
 State 88
 
-   23 expression: '(' . expression ')'
+   11 proc_call: . IDENT '(' arguments ')'
+   16 expression: . POSINT
+   17           | . REAL
+   18           | . IDENT array_call
+   19           | . KW_RESULT
+   20           | . KW_TRUE
+   21           | . KW_FALSE
+   22           | . STRING
+   23           | . '(' expression ')'
+   23           | '(' . expression ')'
+   24           | . CAST_INTEGER expression
+   25           | . CAST_BOOLEAN expression
+   26           | . CAST_CHAR expression
+   27           | . CAST_REAL expression
+   28           | . expression '+' expression
+   29           | . expression '-' expression
+   30           | . expression '*' expression
+   31           | . expression '/' expression
+   32           | . expression KW_DIV expression
+   33           | . expression KW_MOD expression
+   34           | . KW_NOT expression
+   35           | . '-' expression
+   36           | . '+' expression
+   37           | . expression '=' expression
+   38           | . expression OP_INEQUAL expression
+   39           | . expression '<' expression
+   40           | . expression '>' expression
+   41           | . expression OP_LESSEQ expression
+   42           | . expression OP_GREATEREQ expression
+   43           | . expression KW_AND expression
+   44           | . expression KW_OR expression
+   45           | . proc_call
 
     IDENT         shift, and go to state 74
     POSINT        shift, and go to state 75
@@ -1330,6 +1827,11 @@ State 90
 
 State 91
 
+   48 basic_data_type: . KW_INTEGER
+   49                | . KW_BOOLEAN
+   50                | . KW_CHAR
+   51                | . KW_REAL
+   52                | . IDENT
    59 type_decl: IDENT '=' KW_ARRAY array_size KW_OF . basic_data_type ';'
 
     IDENT       shift, and go to state 21
@@ -1345,6 +1847,14 @@ State 92
 
    68 var_decl: var_ident ':' KW_FUNCTION '(' . sub_arg_decl_list ')' ':' data_type
    69         | var_ident ':' KW_FUNCTION '(' . ')' ':' data_type
+   77 sub_arg_decl_list: . sub_arg_decl
+   78                  | . sub_arg_decl_list ';' sub_arg_decl
+   79 sub_arg_decl: . var_ident ':' data_type
+   80             | . var_ident ':' KW_ARRAY array_size KW_OF basic_data_type
+   81             | . var_ident ':' KW_FUNCTION '(' sub_arg_decl_list ')' ':' data_type
+   82             | . var_ident ':' KW_FUNCTION '(' ')' ':' data_type
+   84 var_ident: . IDENT
+   85          | . IDENT ',' var_ident
 
     IDENT  shift, and go to state 16
     ')'    shift, and go to state 139
@@ -1363,7 +1873,42 @@ State 93
 
 State 94
 
-   11 proc_call: IDENT '(' . arguments ')'
+   11 proc_call: . IDENT '(' arguments ')'
+   11          | IDENT '(' . arguments ')'
+   12 arguments: . %empty  [')']
+   13          | . arglist
+   14 arglist: . expression
+   15        | . arglist ',' expression
+   16 expression: . POSINT
+   17           | . REAL
+   18           | . IDENT array_call
+   19           | . KW_RESULT
+   20           | . KW_TRUE
+   21           | . KW_FALSE
+   22           | . STRING
+   23           | . '(' expression ')'
+   24           | . CAST_INTEGER expression
+   25           | . CAST_BOOLEAN expression
+   26           | . CAST_CHAR expression
+   27           | . CAST_REAL expression
+   28           | . expression '+' expression
+   29           | . expression '-' expression
+   30           | . expression '*' expression
+   31           | . expression '/' expression
+   32           | . expression KW_DIV expression
+   33           | . expression KW_MOD expression
+   34           | . KW_NOT expression
+   35           | . '-' expression
+   36           | . '+' expression
+   37           | . expression '=' expression
+   38           | . expression OP_INEQUAL expression
+   39           | . expression '<' expression
+   40           | . expression '>' expression
+   41           | . expression OP_LESSEQ expression
+   42           | . expression OP_GREATEREQ expression
+   43           | . expression KW_AND expression
+   44           | . expression KW_OR expression
+   45           | . proc_call
 
     IDENT         shift, and go to state 74
     POSINT        shift, and go to state 75
@@ -1391,7 +1936,29 @@ State 94
 
 State 95
 
-   99 instruction: IDENT ':' . statement
+    4 body: . KW_BEGIN statements KW_END
+    9 statement: . proc_call
+   10          | . instruction
+   11 proc_call: . IDENT '(' arguments ')'
+   90 instruction: . body
+   91            | . IDENT array_call ASSIGN expression
+   92            | . KW_RESULT ASSIGN expression
+   93            | . KW_IF expression KW_THEN statement
+   94            | . KW_IF expression KW_THEN statement KW_ELSE statement
+   95            | . KW_FOR IDENT array_call ASSIGN expression KW_TO expression KW_DO statement
+   96            | . KW_FOR IDENT array_call ASSIGN expression KW_DOWNTO expression KW_DO statement
+   97            | . KW_WHILE expression KW_DO statement
+   98            | . KW_REPEAT statement KW_UNTIL expression
+   99            | . IDENT ':' statement
+   99            | IDENT ':' . statement
+  100            | . KW_GOTO IDENT
+  101            | . KW_RETURN
+  102            | . IDENT array_call ASSIGN LIB_RS '(' ')'
+  103            | . IDENT array_call ASSIGN LIB_RI '(' ')'
+  104            | . IDENT array_call ASSIGN LIB_RR '(' ')'
+  105            | . KW_RESULT ASSIGN LIB_RS '(' ')'
+  106            | . KW_RESULT ASSIGN LIB_RI '(' ')'
+  107            | . KW_RESULT ASSIGN LIB_RR '(' ')'
 
     IDENT      shift, and go to state 50
     KW_BEGIN   shift, and go to state 51
@@ -1435,6 +2002,37 @@ State 98
 
 State 99
 
+   11 proc_call: . IDENT '(' arguments ')'
+   16 expression: . POSINT
+   17           | . REAL
+   18           | . IDENT array_call
+   19           | . KW_RESULT
+   20           | . KW_TRUE
+   21           | . KW_FALSE
+   22           | . STRING
+   23           | . '(' expression ')'
+   24           | . CAST_INTEGER expression
+   25           | . CAST_BOOLEAN expression
+   26           | . CAST_CHAR expression
+   27           | . CAST_REAL expression
+   28           | . expression '+' expression
+   29           | . expression '-' expression
+   30           | . expression '*' expression
+   31           | . expression '/' expression
+   32           | . expression KW_DIV expression
+   33           | . expression KW_MOD expression
+   34           | . KW_NOT expression
+   35           | . '-' expression
+   36           | . '+' expression
+   37           | . expression '=' expression
+   38           | . expression OP_INEQUAL expression
+   39           | . expression '<' expression
+   40           | . expression '>' expression
+   41           | . expression OP_LESSEQ expression
+   42           | . expression OP_GREATEREQ expression
+   43           | . expression KW_AND expression
+   44           | . expression KW_OR expression
+   45           | . proc_call
    92 instruction: KW_RESULT ASSIGN . expression
   105            | KW_RESULT ASSIGN . LIB_RS '(' ')'
   106            | KW_RESULT ASSIGN . LIB_RI '(' ')'
@@ -1508,6 +2106,10 @@ State 101
 
 State 102
 
+   86 array_call: . %empty  [ASSIGN]
+   87           | . array_size
+   88 array_size: . '[' expression ']'
+   89           | . '[' expression ']' array_size
    95 instruction: KW_FOR IDENT . array_call ASSIGN expression KW_TO expression KW_DO statement
    96            | KW_FOR IDENT . array_call ASSIGN expression KW_DOWNTO expression KW_DO statement
 
@@ -1570,7 +2172,29 @@ State 105
 
 State 106
 
+    4 body: . KW_BEGIN statements KW_END
     8 statement_list: statement_list ';' . statement
+    9 statement: . proc_call
+   10          | . instruction
+   11 proc_call: . IDENT '(' arguments ')'
+   90 instruction: . body
+   91            | . IDENT array_call ASSIGN expression
+   92            | . KW_RESULT ASSIGN expression
+   93            | . KW_IF expression KW_THEN statement
+   94            | . KW_IF expression KW_THEN statement KW_ELSE statement
+   95            | . KW_FOR IDENT array_call ASSIGN expression KW_TO expression KW_DO statement
+   96            | . KW_FOR IDENT array_call ASSIGN expression KW_DOWNTO expression KW_DO statement
+   97            | . KW_WHILE expression KW_DO statement
+   98            | . KW_REPEAT statement KW_UNTIL expression
+   99            | . IDENT ':' statement
+  100            | . KW_GOTO IDENT
+  101            | . KW_RETURN
+  102            | . IDENT array_call ASSIGN LIB_RS '(' ')'
+  103            | . IDENT array_call ASSIGN LIB_RI '(' ')'
+  104            | . IDENT array_call ASSIGN LIB_RR '(' ')'
+  105            | . KW_RESULT ASSIGN LIB_RS '(' ')'
+  106            | . KW_RESULT ASSIGN LIB_RI '(' ')'
+  107            | . KW_RESULT ASSIGN LIB_RR '(' ')'
 
     IDENT      shift, and go to state 50
     KW_BEGIN   shift, and go to state 51
@@ -1592,6 +2216,14 @@ State 107
 
    75 subroutine_decl: KW_FUNCTION IDENT '(' . sub_arg_decl_list ')' ':' data_type ';'
    76                | KW_FUNCTION IDENT '(' . ')' ':' data_type ';'
+   77 sub_arg_decl_list: . sub_arg_decl
+   78                  | . sub_arg_decl_list ';' sub_arg_decl
+   79 sub_arg_decl: . var_ident ':' data_type
+   80             | . var_ident ':' KW_ARRAY array_size KW_OF basic_data_type
+   81             | . var_ident ':' KW_FUNCTION '(' sub_arg_decl_list ')' ':' data_type
+   82             | . var_ident ':' KW_FUNCTION '(' ')' ':' data_type
+   84 var_ident: . IDENT
+   85          | . IDENT ',' var_ident
 
     IDENT  shift, and go to state 16
     ')'    shift, and go to state 157
@@ -1605,6 +2237,14 @@ State 108
 
    73 subroutine_decl: KW_PROCEDURE IDENT '(' . sub_arg_decl_list ')' ';'
    74                | KW_PROCEDURE IDENT '(' . ')' ';'
+   77 sub_arg_decl_list: . sub_arg_decl
+   78                  | . sub_arg_decl_list ';' sub_arg_decl
+   79 sub_arg_decl: . var_ident ':' data_type
+   80             | . var_ident ':' KW_ARRAY array_size KW_OF basic_data_type
+   81             | . var_ident ':' KW_FUNCTION '(' sub_arg_decl_list ')' ':' data_type
+   82             | . var_ident ':' KW_FUNCTION '(' ')' ':' data_type
+   84 var_ident: . IDENT
+   85          | . IDENT ',' var_ident
 
     IDENT  shift, and go to state 16
     ')'    shift, and go to state 159
@@ -1616,6 +2256,8 @@ State 108
 
 State 109
 
+   70 subroutine_decl_list: . %empty
+   71                     | . subroutine_decl_list subroutine
    72 subroutine: subroutine_decl type_declaration var_declaration . subroutine_decl_list subroutine_body ';'
 
     $default  reduce using rule 70 (subroutine_decl_list)
@@ -1625,6 +2267,14 @@ State 109
 
 State 110
 
+   46 data_type: . basic_data_type
+   47          | . array_of_type
+   48 basic_data_type: . KW_INTEGER
+   49                | . KW_BOOLEAN
+   50                | . KW_CHAR
+   51                | . KW_REAL
+   52                | . IDENT
+   53 array_of_type: . KW_ARRAY KW_OF basic_data_type
    61 type_decl: IDENT '=' KW_FUNCTION '(' ')' ':' . data_type ';'
 
     IDENT       shift, and go to state 21
@@ -1642,6 +2292,12 @@ State 110
 State 111
 
    78 sub_arg_decl_list: sub_arg_decl_list ';' . sub_arg_decl
+   79 sub_arg_decl: . var_ident ':' data_type
+   80             | . var_ident ':' KW_ARRAY array_size KW_OF basic_data_type
+   81             | . var_ident ':' KW_FUNCTION '(' sub_arg_decl_list ')' ':' data_type
+   82             | . var_ident ':' KW_FUNCTION '(' ')' ':' data_type
+   84 var_ident: . IDENT
+   85          | . IDENT ',' var_ident
 
     IDENT  shift, and go to state 16
 
@@ -1658,6 +2314,14 @@ State 112
 
 State 113
 
+   46 data_type: . basic_data_type
+   47          | . array_of_type
+   48 basic_data_type: . KW_INTEGER
+   49                | . KW_BOOLEAN
+   50                | . KW_CHAR
+   51                | . KW_REAL
+   52                | . IDENT
+   53 array_of_type: . KW_ARRAY KW_OF basic_data_type
    79 sub_arg_decl: var_ident ':' . data_type
    80             | var_ident ':' . KW_ARRAY array_size KW_OF basic_data_type
    81             | var_ident ':' . KW_FUNCTION '(' sub_arg_decl_list ')' ':' data_type
@@ -1691,7 +2355,7 @@ State 115
    31           | expression . '/' expression
    32           | expression . KW_DIV expression
    33           | expression . KW_MOD expression
-   34           | KW_NOT expression .
+   34           | KW_NOT expression .  [KW_END, KW_AND, KW_DIV, KW_MOD, KW_DO, KW_ELSE, KW_THEN, KW_OR, KW_UNTIL, KW_TO, KW_DOWNTO, OP_INEQUAL, OP_LESSEQ, OP_GREATEREQ, '=', '<', '>', '-', '+', '*', '/', ';', ')', ',', ']']
    37           | expression . '=' expression
    38           | expression . OP_INEQUAL expression
    39           | expression . '<' expression
@@ -1703,10 +2367,25 @@ State 115
 
     $default  reduce using rule 34 (expression)
 
+    Conflict between rule 34 and token KW_AND resolved as reduce (KW_AND < KW_NOT).
+    Conflict between rule 34 and token KW_DIV resolved as reduce (KW_DIV < KW_NOT).
+    Conflict between rule 34 and token KW_MOD resolved as reduce (KW_MOD < KW_NOT).
+    Conflict between rule 34 and token KW_OR resolved as reduce (KW_OR < KW_NOT).
+    Conflict between rule 34 and token OP_INEQUAL resolved as reduce (OP_INEQUAL < KW_NOT).
+    Conflict between rule 34 and token OP_LESSEQ resolved as reduce (OP_LESSEQ < KW_NOT).
+    Conflict between rule 34 and token OP_GREATEREQ resolved as reduce (OP_GREATEREQ < KW_NOT).
+    Conflict between rule 34 and token '=' resolved as reduce ('=' < KW_NOT).
+    Conflict between rule 34 and token '<' resolved as reduce ('<' < KW_NOT).
+    Conflict between rule 34 and token '>' resolved as reduce ('>' < KW_NOT).
+    Conflict between rule 34 and token '-' resolved as reduce ('-' < KW_NOT).
+    Conflict between rule 34 and token '+' resolved as reduce ('+' < KW_NOT).
+    Conflict between rule 34 and token '*' resolved as reduce ('*' < KW_NOT).
+    Conflict between rule 34 and token '/' resolved as reduce ('/' < KW_NOT).
+
 
 State 116
 
-   24 expression: CAST_INTEGER expression .
+   24 expression: CAST_INTEGER expression .  [KW_END, KW_AND, KW_DIV, KW_MOD, KW_DO, KW_ELSE, KW_THEN, KW_OR, KW_UNTIL, KW_TO, KW_DOWNTO, OP_INEQUAL, OP_LESSEQ, OP_GREATEREQ, '=', '<', '>', '-', '+', '*', '/', ';', ')', ',', ']']
    28           | expression . '+' expression
    29           | expression . '-' expression
    30           | expression . '*' expression
@@ -1724,10 +2403,25 @@ State 116
 
     $default  reduce using rule 24 (expression)
 
+    Conflict between rule 24 and token KW_AND resolved as reduce (KW_AND < CAST_INTEGER).
+    Conflict between rule 24 and token KW_DIV resolved as reduce (KW_DIV < CAST_INTEGER).
+    Conflict between rule 24 and token KW_MOD resolved as reduce (KW_MOD < CAST_INTEGER).
+    Conflict between rule 24 and token KW_OR resolved as reduce (KW_OR < CAST_INTEGER).
+    Conflict between rule 24 and token OP_INEQUAL resolved as reduce (OP_INEQUAL < CAST_INTEGER).
+    Conflict between rule 24 and token OP_LESSEQ resolved as reduce (OP_LESSEQ < CAST_INTEGER).
+    Conflict between rule 24 and token OP_GREATEREQ resolved as reduce (OP_GREATEREQ < CAST_INTEGER).
+    Conflict between rule 24 and token '=' resolved as reduce ('=' < CAST_INTEGER).
+    Conflict between rule 24 and token '<' resolved as reduce ('<' < CAST_INTEGER).
+    Conflict between rule 24 and token '>' resolved as reduce ('>' < CAST_INTEGER).
+    Conflict between rule 24 and token '-' resolved as reduce ('-' < CAST_INTEGER).
+    Conflict between rule 24 and token '+' resolved as reduce ('+' < CAST_INTEGER).
+    Conflict between rule 24 and token '*' resolved as reduce ('*' < CAST_INTEGER).
+    Conflict between rule 24 and token '/' resolved as reduce ('/' < CAST_INTEGER).
+
 
 State 117
 
-   25 expression: CAST_BOOLEAN expression .
+   25 expression: CAST_BOOLEAN expression .  [KW_END, KW_AND, KW_DIV, KW_MOD, KW_DO, KW_ELSE, KW_THEN, KW_OR, KW_UNTIL, KW_TO, KW_DOWNTO, OP_INEQUAL, OP_LESSEQ, OP_GREATEREQ, '=', '<', '>', '-', '+', '*', '/', ';', ')', ',', ']']
    28           | expression . '+' expression
    29           | expression . '-' expression
    30           | expression . '*' expression
@@ -1745,10 +2439,25 @@ State 117
 
     $default  reduce using rule 25 (expression)
 
+    Conflict between rule 25 and token KW_AND resolved as reduce (KW_AND < CAST_BOOLEAN).
+    Conflict between rule 25 and token KW_DIV resolved as reduce (KW_DIV < CAST_BOOLEAN).
+    Conflict between rule 25 and token KW_MOD resolved as reduce (KW_MOD < CAST_BOOLEAN).
+    Conflict between rule 25 and token KW_OR resolved as reduce (KW_OR < CAST_BOOLEAN).
+    Conflict between rule 25 and token OP_INEQUAL resolved as reduce (OP_INEQUAL < CAST_BOOLEAN).
+    Conflict between rule 25 and token OP_LESSEQ resolved as reduce (OP_LESSEQ < CAST_BOOLEAN).
+    Conflict between rule 25 and token OP_GREATEREQ resolved as reduce (OP_GREATEREQ < CAST_BOOLEAN).
+    Conflict between rule 25 and token '=' resolved as reduce ('=' < CAST_BOOLEAN).
+    Conflict between rule 25 and token '<' resolved as reduce ('<' < CAST_BOOLEAN).
+    Conflict between rule 25 and token '>' resolved as reduce ('>' < CAST_BOOLEAN).
+    Conflict between rule 25 and token '-' resolved as reduce ('-' < CAST_BOOLEAN).
+    Conflict between rule 25 and token '+' resolved as reduce ('+' < CAST_BOOLEAN).
+    Conflict between rule 25 and token '*' resolved as reduce ('*' < CAST_BOOLEAN).
+    Conflict between rule 25 and token '/' resolved as reduce ('/' < CAST_BOOLEAN).
+
 
 State 118
 
-   26 expression: CAST_CHAR expression .
+   26 expression: CAST_CHAR expression .  [KW_END, KW_AND, KW_DIV, KW_MOD, KW_DO, KW_ELSE, KW_THEN, KW_OR, KW_UNTIL, KW_TO, KW_DOWNTO, OP_INEQUAL, OP_LESSEQ, OP_GREATEREQ, '=', '<', '>', '-', '+', '*', '/', ';', ')', ',', ']']
    28           | expression . '+' expression
    29           | expression . '-' expression
    30           | expression . '*' expression
@@ -1766,10 +2475,25 @@ State 118
 
     $default  reduce using rule 26 (expression)
 
+    Conflict between rule 26 and token KW_AND resolved as reduce (KW_AND < CAST_CHAR).
+    Conflict between rule 26 and token KW_DIV resolved as reduce (KW_DIV < CAST_CHAR).
+    Conflict between rule 26 and token KW_MOD resolved as reduce (KW_MOD < CAST_CHAR).
+    Conflict between rule 26 and token KW_OR resolved as reduce (KW_OR < CAST_CHAR).
+    Conflict between rule 26 and token OP_INEQUAL resolved as reduce (OP_INEQUAL < CAST_CHAR).
+    Conflict between rule 26 and token OP_LESSEQ resolved as reduce (OP_LESSEQ < CAST_CHAR).
+    Conflict between rule 26 and token OP_GREATEREQ resolved as reduce (OP_GREATEREQ < CAST_CHAR).
+    Conflict between rule 26 and token '=' resolved as reduce ('=' < CAST_CHAR).
+    Conflict between rule 26 and token '<' resolved as reduce ('<' < CAST_CHAR).
+    Conflict between rule 26 and token '>' resolved as reduce ('>' < CAST_CHAR).
+    Conflict between rule 26 and token '-' resolved as reduce ('-' < CAST_CHAR).
+    Conflict between rule 26 and token '+' resolved as reduce ('+' < CAST_CHAR).
+    Conflict between rule 26 and token '*' resolved as reduce ('*' < CAST_CHAR).
+    Conflict between rule 26 and token '/' resolved as reduce ('/' < CAST_CHAR).
+
 
 State 119
 
-   27 expression: CAST_REAL expression .
+   27 expression: CAST_REAL expression .  [KW_END, KW_AND, KW_DIV, KW_MOD, KW_DO, KW_ELSE, KW_THEN, KW_OR, KW_UNTIL, KW_TO, KW_DOWNTO, OP_INEQUAL, OP_LESSEQ, OP_GREATEREQ, '=', '<', '>', '-', '+', '*', '/', ';', ')', ',', ']']
    28           | expression . '+' expression
    29           | expression . '-' expression
    30           | expression . '*' expression
@@ -1787,6 +2511,21 @@ State 119
 
     $default  reduce using rule 27 (expression)
 
+    Conflict between rule 27 and token KW_AND resolved as reduce (KW_AND < CAST_REAL).
+    Conflict between rule 27 and token KW_DIV resolved as reduce (KW_DIV < CAST_REAL).
+    Conflict between rule 27 and token KW_MOD resolved as reduce (KW_MOD < CAST_REAL).
+    Conflict between rule 27 and token KW_OR resolved as reduce (KW_OR < CAST_REAL).
+    Conflict between rule 27 and token OP_INEQUAL resolved as reduce (OP_INEQUAL < CAST_REAL).
+    Conflict between rule 27 and token OP_LESSEQ resolved as reduce (OP_LESSEQ < CAST_REAL).
+    Conflict between rule 27 and token OP_GREATEREQ resolved as reduce (OP_GREATEREQ < CAST_REAL).
+    Conflict between rule 27 and token '=' resolved as reduce ('=' < CAST_REAL).
+    Conflict between rule 27 and token '<' resolved as reduce ('<' < CAST_REAL).
+    Conflict between rule 27 and token '>' resolved as reduce ('>' < CAST_REAL).
+    Conflict between rule 27 and token '-' resolved as reduce ('-' < CAST_REAL).
+    Conflict between rule 27 and token '+' resolved as reduce ('+' < CAST_REAL).
+    Conflict between rule 27 and token '*' resolved as reduce ('*' < CAST_REAL).
+    Conflict between rule 27 and token '/' resolved as reduce ('/' < CAST_REAL).
+
 
 State 120
 
@@ -1796,7 +2535,7 @@ State 120
    31           | expression . '/' expression
    32           | expression . KW_DIV expression
    33           | expression . KW_MOD expression
-   35           | '-' expression .
+   35           | '-' expression .  [KW_END, KW_AND, KW_DIV, KW_MOD, KW_DO, KW_ELSE, KW_THEN, KW_OR, KW_UNTIL, KW_TO, KW_DOWNTO, OP_INEQUAL, OP_LESSEQ, OP_GREATEREQ, '=', '<', '>', '-', '+', '*', '/', ';', ')', ',', ']']
    37           | expression . '=' expression
    38           | expression . OP_INEQUAL expression
    39           | expression . '<' expression
@@ -1808,6 +2547,21 @@ State 120
 
     $default  reduce using rule 35 (expression)
 
+    Conflict between rule 35 and token KW_AND resolved as reduce (KW_AND < UMINUS).
+    Conflict between rule 35 and token KW_DIV resolved as reduce (KW_DIV < UMINUS).
+    Conflict between rule 35 and token KW_MOD resolved as reduce (KW_MOD < UMINUS).
+    Conflict between rule 35 and token KW_OR resolved as reduce (KW_OR < UMINUS).
+    Conflict between rule 35 and token OP_INEQUAL resolved as reduce (OP_INEQUAL < UMINUS).
+    Conflict between rule 35 and token OP_LESSEQ resolved as reduce (OP_LESSEQ < UMINUS).
+    Conflict between rule 35 and token OP_GREATEREQ resolved as reduce (OP_GREATEREQ < UMINUS).
+    Conflict between rule 35 and token '=' resolved as reduce ('=' < UMINUS).
+    Conflict between rule 35 and token '<' resolved as reduce ('<' < UMINUS).
+    Conflict between rule 35 and token '>' resolved as reduce ('>' < UMINUS).
+    Conflict between rule 35 and token '-' resolved as reduce ('-' < UMINUS).
+    Conflict between rule 35 and token '+' resolved as reduce ('+' < UMINUS).
+    Conflict between rule 35 and token '*' resolved as reduce ('*' < UMINUS).
+    Conflict between rule 35 and token '/' resolved as reduce ('/' < UMINUS).
+
 
 State 121
 
@@ -1817,7 +2571,7 @@ State 121
    31           | expression . '/' expression
    32           | expression . KW_DIV expression
    33           | expression . KW_MOD expression
-   36           | '+' expression .
+   36           | '+' expression .  [KW_END, KW_AND, KW_DIV, KW_MOD, KW_DO, KW_ELSE, KW_THEN, KW_OR, KW_UNTIL, KW_TO, KW_DOWNTO, OP_INEQUAL, OP_LESSEQ, OP_GREATEREQ, '=', '<', '>', '-', '+', '*', '/', ';', ')', ',', ']']
    37           | expression . '=' expression
    38           | expression . OP_INEQUAL expression
    39           | expression . '<' expression
@@ -1828,6 +2582,21 @@ State 121
    44           | expression . KW_OR expression
 
     $default  reduce using rule 36 (expression)
+
+    Conflict between rule 36 and token KW_AND resolved as reduce (KW_AND < UPLUS).
+    Conflict between rule 36 and token KW_DIV resolved as reduce (KW_DIV < UPLUS).
+    Conflict between rule 36 and token KW_MOD resolved as reduce (KW_MOD < UPLUS).
+    Conflict between rule 36 and token KW_OR resolved as reduce (KW_OR < UPLUS).
+    Conflict between rule 36 and token OP_INEQUAL resolved as reduce (OP_INEQUAL < UPLUS).
+    Conflict between rule 36 and token OP_LESSEQ resolved as reduce (OP_LESSEQ < UPLUS).
+    Conflict between rule 36 and token OP_GREATEREQ resolved as reduce (OP_GREATEREQ < UPLUS).
+    Conflict between rule 36 and token '=' resolved as reduce ('=' < UPLUS).
+    Conflict between rule 36 and token '<' resolved as reduce ('<' < UPLUS).
+    Conflict between rule 36 and token '>' resolved as reduce ('>' < UPLUS).
+    Conflict between rule 36 and token '-' resolved as reduce ('-' < UPLUS).
+    Conflict between rule 36 and token '+' resolved as reduce ('+' < UPLUS).
+    Conflict between rule 36 and token '*' resolved as reduce ('*' < UPLUS).
+    Conflict between rule 36 and token '/' resolved as reduce ('/' < UPLUS).
 
 
 State 122
@@ -1867,7 +2636,38 @@ State 122
 
 State 123
 
-   43 expression: expression KW_AND . expression
+   11 proc_call: . IDENT '(' arguments ')'
+   16 expression: . POSINT
+   17           | . REAL
+   18           | . IDENT array_call
+   19           | . KW_RESULT
+   20           | . KW_TRUE
+   21           | . KW_FALSE
+   22           | . STRING
+   23           | . '(' expression ')'
+   24           | . CAST_INTEGER expression
+   25           | . CAST_BOOLEAN expression
+   26           | . CAST_CHAR expression
+   27           | . CAST_REAL expression
+   28           | . expression '+' expression
+   29           | . expression '-' expression
+   30           | . expression '*' expression
+   31           | . expression '/' expression
+   32           | . expression KW_DIV expression
+   33           | . expression KW_MOD expression
+   34           | . KW_NOT expression
+   35           | . '-' expression
+   36           | . '+' expression
+   37           | . expression '=' expression
+   38           | . expression OP_INEQUAL expression
+   39           | . expression '<' expression
+   40           | . expression '>' expression
+   41           | . expression OP_LESSEQ expression
+   42           | . expression OP_GREATEREQ expression
+   43           | . expression KW_AND expression
+   43           | expression KW_AND . expression
+   44           | . expression KW_OR expression
+   45           | . proc_call
 
     IDENT         shift, and go to state 74
     POSINT        shift, and go to state 75
@@ -1891,7 +2691,38 @@ State 123
 
 State 124
 
-   32 expression: expression KW_DIV . expression
+   11 proc_call: . IDENT '(' arguments ')'
+   16 expression: . POSINT
+   17           | . REAL
+   18           | . IDENT array_call
+   19           | . KW_RESULT
+   20           | . KW_TRUE
+   21           | . KW_FALSE
+   22           | . STRING
+   23           | . '(' expression ')'
+   24           | . CAST_INTEGER expression
+   25           | . CAST_BOOLEAN expression
+   26           | . CAST_CHAR expression
+   27           | . CAST_REAL expression
+   28           | . expression '+' expression
+   29           | . expression '-' expression
+   30           | . expression '*' expression
+   31           | . expression '/' expression
+   32           | . expression KW_DIV expression
+   32           | expression KW_DIV . expression
+   33           | . expression KW_MOD expression
+   34           | . KW_NOT expression
+   35           | . '-' expression
+   36           | . '+' expression
+   37           | . expression '=' expression
+   38           | . expression OP_INEQUAL expression
+   39           | . expression '<' expression
+   40           | . expression '>' expression
+   41           | . expression OP_LESSEQ expression
+   42           | . expression OP_GREATEREQ expression
+   43           | . expression KW_AND expression
+   44           | . expression KW_OR expression
+   45           | . proc_call
 
     IDENT         shift, and go to state 74
     POSINT        shift, and go to state 75
@@ -1915,7 +2746,38 @@ State 124
 
 State 125
 
-   33 expression: expression KW_MOD . expression
+   11 proc_call: . IDENT '(' arguments ')'
+   16 expression: . POSINT
+   17           | . REAL
+   18           | . IDENT array_call
+   19           | . KW_RESULT
+   20           | . KW_TRUE
+   21           | . KW_FALSE
+   22           | . STRING
+   23           | . '(' expression ')'
+   24           | . CAST_INTEGER expression
+   25           | . CAST_BOOLEAN expression
+   26           | . CAST_CHAR expression
+   27           | . CAST_REAL expression
+   28           | . expression '+' expression
+   29           | . expression '-' expression
+   30           | . expression '*' expression
+   31           | . expression '/' expression
+   32           | . expression KW_DIV expression
+   33           | . expression KW_MOD expression
+   33           | expression KW_MOD . expression
+   34           | . KW_NOT expression
+   35           | . '-' expression
+   36           | . '+' expression
+   37           | . expression '=' expression
+   38           | . expression OP_INEQUAL expression
+   39           | . expression '<' expression
+   40           | . expression '>' expression
+   41           | . expression OP_LESSEQ expression
+   42           | . expression OP_GREATEREQ expression
+   43           | . expression KW_AND expression
+   44           | . expression KW_OR expression
+   45           | . proc_call
 
     IDENT         shift, and go to state 74
     POSINT        shift, and go to state 75
@@ -1939,7 +2801,38 @@ State 125
 
 State 126
 
-   44 expression: expression KW_OR . expression
+   11 proc_call: . IDENT '(' arguments ')'
+   16 expression: . POSINT
+   17           | . REAL
+   18           | . IDENT array_call
+   19           | . KW_RESULT
+   20           | . KW_TRUE
+   21           | . KW_FALSE
+   22           | . STRING
+   23           | . '(' expression ')'
+   24           | . CAST_INTEGER expression
+   25           | . CAST_BOOLEAN expression
+   26           | . CAST_CHAR expression
+   27           | . CAST_REAL expression
+   28           | . expression '+' expression
+   29           | . expression '-' expression
+   30           | . expression '*' expression
+   31           | . expression '/' expression
+   32           | . expression KW_DIV expression
+   33           | . expression KW_MOD expression
+   34           | . KW_NOT expression
+   35           | . '-' expression
+   36           | . '+' expression
+   37           | . expression '=' expression
+   38           | . expression OP_INEQUAL expression
+   39           | . expression '<' expression
+   40           | . expression '>' expression
+   41           | . expression OP_LESSEQ expression
+   42           | . expression OP_GREATEREQ expression
+   43           | . expression KW_AND expression
+   44           | . expression KW_OR expression
+   44           | expression KW_OR . expression
+   45           | . proc_call
 
     IDENT         shift, and go to state 74
     POSINT        shift, and go to state 75
@@ -1963,7 +2856,38 @@ State 126
 
 State 127
 
-   38 expression: expression OP_INEQUAL . expression
+   11 proc_call: . IDENT '(' arguments ')'
+   16 expression: . POSINT
+   17           | . REAL
+   18           | . IDENT array_call
+   19           | . KW_RESULT
+   20           | . KW_TRUE
+   21           | . KW_FALSE
+   22           | . STRING
+   23           | . '(' expression ')'
+   24           | . CAST_INTEGER expression
+   25           | . CAST_BOOLEAN expression
+   26           | . CAST_CHAR expression
+   27           | . CAST_REAL expression
+   28           | . expression '+' expression
+   29           | . expression '-' expression
+   30           | . expression '*' expression
+   31           | . expression '/' expression
+   32           | . expression KW_DIV expression
+   33           | . expression KW_MOD expression
+   34           | . KW_NOT expression
+   35           | . '-' expression
+   36           | . '+' expression
+   37           | . expression '=' expression
+   38           | . expression OP_INEQUAL expression
+   38           | expression OP_INEQUAL . expression
+   39           | . expression '<' expression
+   40           | . expression '>' expression
+   41           | . expression OP_LESSEQ expression
+   42           | . expression OP_GREATEREQ expression
+   43           | . expression KW_AND expression
+   44           | . expression KW_OR expression
+   45           | . proc_call
 
     IDENT         shift, and go to state 74
     POSINT        shift, and go to state 75
@@ -1987,7 +2911,38 @@ State 127
 
 State 128
 
-   41 expression: expression OP_LESSEQ . expression
+   11 proc_call: . IDENT '(' arguments ')'
+   16 expression: . POSINT
+   17           | . REAL
+   18           | . IDENT array_call
+   19           | . KW_RESULT
+   20           | . KW_TRUE
+   21           | . KW_FALSE
+   22           | . STRING
+   23           | . '(' expression ')'
+   24           | . CAST_INTEGER expression
+   25           | . CAST_BOOLEAN expression
+   26           | . CAST_CHAR expression
+   27           | . CAST_REAL expression
+   28           | . expression '+' expression
+   29           | . expression '-' expression
+   30           | . expression '*' expression
+   31           | . expression '/' expression
+   32           | . expression KW_DIV expression
+   33           | . expression KW_MOD expression
+   34           | . KW_NOT expression
+   35           | . '-' expression
+   36           | . '+' expression
+   37           | . expression '=' expression
+   38           | . expression OP_INEQUAL expression
+   39           | . expression '<' expression
+   40           | . expression '>' expression
+   41           | . expression OP_LESSEQ expression
+   41           | expression OP_LESSEQ . expression
+   42           | . expression OP_GREATEREQ expression
+   43           | . expression KW_AND expression
+   44           | . expression KW_OR expression
+   45           | . proc_call
 
     IDENT         shift, and go to state 74
     POSINT        shift, and go to state 75
@@ -2011,7 +2966,38 @@ State 128
 
 State 129
 
-   42 expression: expression OP_GREATEREQ . expression
+   11 proc_call: . IDENT '(' arguments ')'
+   16 expression: . POSINT
+   17           | . REAL
+   18           | . IDENT array_call
+   19           | . KW_RESULT
+   20           | . KW_TRUE
+   21           | . KW_FALSE
+   22           | . STRING
+   23           | . '(' expression ')'
+   24           | . CAST_INTEGER expression
+   25           | . CAST_BOOLEAN expression
+   26           | . CAST_CHAR expression
+   27           | . CAST_REAL expression
+   28           | . expression '+' expression
+   29           | . expression '-' expression
+   30           | . expression '*' expression
+   31           | . expression '/' expression
+   32           | . expression KW_DIV expression
+   33           | . expression KW_MOD expression
+   34           | . KW_NOT expression
+   35           | . '-' expression
+   36           | . '+' expression
+   37           | . expression '=' expression
+   38           | . expression OP_INEQUAL expression
+   39           | . expression '<' expression
+   40           | . expression '>' expression
+   41           | . expression OP_LESSEQ expression
+   42           | . expression OP_GREATEREQ expression
+   42           | expression OP_GREATEREQ . expression
+   43           | . expression KW_AND expression
+   44           | . expression KW_OR expression
+   45           | . proc_call
 
     IDENT         shift, and go to state 74
     POSINT        shift, and go to state 75
@@ -2035,7 +3021,38 @@ State 129
 
 State 130
 
-   37 expression: expression '=' . expression
+   11 proc_call: . IDENT '(' arguments ')'
+   16 expression: . POSINT
+   17           | . REAL
+   18           | . IDENT array_call
+   19           | . KW_RESULT
+   20           | . KW_TRUE
+   21           | . KW_FALSE
+   22           | . STRING
+   23           | . '(' expression ')'
+   24           | . CAST_INTEGER expression
+   25           | . CAST_BOOLEAN expression
+   26           | . CAST_CHAR expression
+   27           | . CAST_REAL expression
+   28           | . expression '+' expression
+   29           | . expression '-' expression
+   30           | . expression '*' expression
+   31           | . expression '/' expression
+   32           | . expression KW_DIV expression
+   33           | . expression KW_MOD expression
+   34           | . KW_NOT expression
+   35           | . '-' expression
+   36           | . '+' expression
+   37           | . expression '=' expression
+   37           | expression '=' . expression
+   38           | . expression OP_INEQUAL expression
+   39           | . expression '<' expression
+   40           | . expression '>' expression
+   41           | . expression OP_LESSEQ expression
+   42           | . expression OP_GREATEREQ expression
+   43           | . expression KW_AND expression
+   44           | . expression KW_OR expression
+   45           | . proc_call
 
     IDENT         shift, and go to state 74
     POSINT        shift, and go to state 75
@@ -2059,7 +3076,38 @@ State 130
 
 State 131
 
-   39 expression: expression '<' . expression
+   11 proc_call: . IDENT '(' arguments ')'
+   16 expression: . POSINT
+   17           | . REAL
+   18           | . IDENT array_call
+   19           | . KW_RESULT
+   20           | . KW_TRUE
+   21           | . KW_FALSE
+   22           | . STRING
+   23           | . '(' expression ')'
+   24           | . CAST_INTEGER expression
+   25           | . CAST_BOOLEAN expression
+   26           | . CAST_CHAR expression
+   27           | . CAST_REAL expression
+   28           | . expression '+' expression
+   29           | . expression '-' expression
+   30           | . expression '*' expression
+   31           | . expression '/' expression
+   32           | . expression KW_DIV expression
+   33           | . expression KW_MOD expression
+   34           | . KW_NOT expression
+   35           | . '-' expression
+   36           | . '+' expression
+   37           | . expression '=' expression
+   38           | . expression OP_INEQUAL expression
+   39           | . expression '<' expression
+   39           | expression '<' . expression
+   40           | . expression '>' expression
+   41           | . expression OP_LESSEQ expression
+   42           | . expression OP_GREATEREQ expression
+   43           | . expression KW_AND expression
+   44           | . expression KW_OR expression
+   45           | . proc_call
 
     IDENT         shift, and go to state 74
     POSINT        shift, and go to state 75
@@ -2083,7 +3131,38 @@ State 131
 
 State 132
 
-   40 expression: expression '>' . expression
+   11 proc_call: . IDENT '(' arguments ')'
+   16 expression: . POSINT
+   17           | . REAL
+   18           | . IDENT array_call
+   19           | . KW_RESULT
+   20           | . KW_TRUE
+   21           | . KW_FALSE
+   22           | . STRING
+   23           | . '(' expression ')'
+   24           | . CAST_INTEGER expression
+   25           | . CAST_BOOLEAN expression
+   26           | . CAST_CHAR expression
+   27           | . CAST_REAL expression
+   28           | . expression '+' expression
+   29           | . expression '-' expression
+   30           | . expression '*' expression
+   31           | . expression '/' expression
+   32           | . expression KW_DIV expression
+   33           | . expression KW_MOD expression
+   34           | . KW_NOT expression
+   35           | . '-' expression
+   36           | . '+' expression
+   37           | . expression '=' expression
+   38           | . expression OP_INEQUAL expression
+   39           | . expression '<' expression
+   40           | . expression '>' expression
+   40           | expression '>' . expression
+   41           | . expression OP_LESSEQ expression
+   42           | . expression OP_GREATEREQ expression
+   43           | . expression KW_AND expression
+   44           | . expression KW_OR expression
+   45           | . proc_call
 
     IDENT         shift, and go to state 74
     POSINT        shift, and go to state 75
@@ -2107,7 +3186,38 @@ State 132
 
 State 133
 
-   29 expression: expression '-' . expression
+   11 proc_call: . IDENT '(' arguments ')'
+   16 expression: . POSINT
+   17           | . REAL
+   18           | . IDENT array_call
+   19           | . KW_RESULT
+   20           | . KW_TRUE
+   21           | . KW_FALSE
+   22           | . STRING
+   23           | . '(' expression ')'
+   24           | . CAST_INTEGER expression
+   25           | . CAST_BOOLEAN expression
+   26           | . CAST_CHAR expression
+   27           | . CAST_REAL expression
+   28           | . expression '+' expression
+   29           | . expression '-' expression
+   29           | expression '-' . expression
+   30           | . expression '*' expression
+   31           | . expression '/' expression
+   32           | . expression KW_DIV expression
+   33           | . expression KW_MOD expression
+   34           | . KW_NOT expression
+   35           | . '-' expression
+   36           | . '+' expression
+   37           | . expression '=' expression
+   38           | . expression OP_INEQUAL expression
+   39           | . expression '<' expression
+   40           | . expression '>' expression
+   41           | . expression OP_LESSEQ expression
+   42           | . expression OP_GREATEREQ expression
+   43           | . expression KW_AND expression
+   44           | . expression KW_OR expression
+   45           | . proc_call
 
     IDENT         shift, and go to state 74
     POSINT        shift, and go to state 75
@@ -2131,7 +3241,38 @@ State 133
 
 State 134
 
-   28 expression: expression '+' . expression
+   11 proc_call: . IDENT '(' arguments ')'
+   16 expression: . POSINT
+   17           | . REAL
+   18           | . IDENT array_call
+   19           | . KW_RESULT
+   20           | . KW_TRUE
+   21           | . KW_FALSE
+   22           | . STRING
+   23           | . '(' expression ')'
+   24           | . CAST_INTEGER expression
+   25           | . CAST_BOOLEAN expression
+   26           | . CAST_CHAR expression
+   27           | . CAST_REAL expression
+   28           | . expression '+' expression
+   28           | expression '+' . expression
+   29           | . expression '-' expression
+   30           | . expression '*' expression
+   31           | . expression '/' expression
+   32           | . expression KW_DIV expression
+   33           | . expression KW_MOD expression
+   34           | . KW_NOT expression
+   35           | . '-' expression
+   36           | . '+' expression
+   37           | . expression '=' expression
+   38           | . expression OP_INEQUAL expression
+   39           | . expression '<' expression
+   40           | . expression '>' expression
+   41           | . expression OP_LESSEQ expression
+   42           | . expression OP_GREATEREQ expression
+   43           | . expression KW_AND expression
+   44           | . expression KW_OR expression
+   45           | . proc_call
 
     IDENT         shift, and go to state 74
     POSINT        shift, and go to state 75
@@ -2155,7 +3296,38 @@ State 134
 
 State 135
 
-   30 expression: expression '*' . expression
+   11 proc_call: . IDENT '(' arguments ')'
+   16 expression: . POSINT
+   17           | . REAL
+   18           | . IDENT array_call
+   19           | . KW_RESULT
+   20           | . KW_TRUE
+   21           | . KW_FALSE
+   22           | . STRING
+   23           | . '(' expression ')'
+   24           | . CAST_INTEGER expression
+   25           | . CAST_BOOLEAN expression
+   26           | . CAST_CHAR expression
+   27           | . CAST_REAL expression
+   28           | . expression '+' expression
+   29           | . expression '-' expression
+   30           | . expression '*' expression
+   30           | expression '*' . expression
+   31           | . expression '/' expression
+   32           | . expression KW_DIV expression
+   33           | . expression KW_MOD expression
+   34           | . KW_NOT expression
+   35           | . '-' expression
+   36           | . '+' expression
+   37           | . expression '=' expression
+   38           | . expression OP_INEQUAL expression
+   39           | . expression '<' expression
+   40           | . expression '>' expression
+   41           | . expression OP_LESSEQ expression
+   42           | . expression OP_GREATEREQ expression
+   43           | . expression KW_AND expression
+   44           | . expression KW_OR expression
+   45           | . proc_call
 
     IDENT         shift, and go to state 74
     POSINT        shift, and go to state 75
@@ -2179,7 +3351,38 @@ State 135
 
 State 136
 
-   31 expression: expression '/' . expression
+   11 proc_call: . IDENT '(' arguments ')'
+   16 expression: . POSINT
+   17           | . REAL
+   18           | . IDENT array_call
+   19           | . KW_RESULT
+   20           | . KW_TRUE
+   21           | . KW_FALSE
+   22           | . STRING
+   23           | . '(' expression ')'
+   24           | . CAST_INTEGER expression
+   25           | . CAST_BOOLEAN expression
+   26           | . CAST_CHAR expression
+   27           | . CAST_REAL expression
+   28           | . expression '+' expression
+   29           | . expression '-' expression
+   30           | . expression '*' expression
+   31           | . expression '/' expression
+   31           | expression '/' . expression
+   32           | . expression KW_DIV expression
+   33           | . expression KW_MOD expression
+   34           | . KW_NOT expression
+   35           | . '-' expression
+   36           | . '+' expression
+   37           | . expression '=' expression
+   38           | . expression OP_INEQUAL expression
+   39           | . expression '<' expression
+   40           | . expression '>' expression
+   41           | . expression OP_LESSEQ expression
+   42           | . expression OP_GREATEREQ expression
+   43           | . expression KW_AND expression
+   44           | . expression KW_OR expression
+   45           | . proc_call
 
     IDENT         shift, and go to state 74
     POSINT        shift, and go to state 75
@@ -2203,7 +3406,9 @@ State 136
 
 State 137
 
-   88 array_size: '[' expression ']' .
+   88 array_size: . '[' expression ']'
+   88           | '[' expression ']' .  [KW_END, KW_AND, KW_DIV, KW_MOD, KW_DO, KW_ELSE, KW_OF, KW_THEN, KW_OR, KW_UNTIL, KW_TO, KW_DOWNTO, OP_INEQUAL, OP_LESSEQ, OP_GREATEREQ, ASSIGN, '=', '<', '>', '-', '+', '*', '/', ';', ')', ',', ']']
+   89           | . '[' expression ']' array_size
    89           | '[' expression ']' . array_size
 
     '['  shift, and go to state 42
@@ -2238,6 +3443,11 @@ State 140
 
 State 141
 
+   48 basic_data_type: . KW_INTEGER
+   49                | . KW_BOOLEAN
+   50                | . KW_CHAR
+   51                | . KW_REAL
+   52                | . IDENT
    67 var_decl: var_ident ':' KW_ARRAY array_size KW_OF . basic_data_type
 
     IDENT       shift, and go to state 21
@@ -2258,7 +3468,7 @@ State 142
 
 State 143
 
-   13 arguments: arglist .
+   13 arguments: arglist .  [')']
    15 arglist: arglist . ',' expression
 
     ','  shift, and go to state 190
@@ -2268,7 +3478,7 @@ State 143
 
 State 144
 
-   14 arglist: expression .
+   14 arglist: expression .  [')', ',']
    28 expression: expression . '+' expression
    29           | expression . '-' expression
    30           | expression . '*' expression
@@ -2311,6 +3521,37 @@ State 145
 
 State 146
 
+   11 proc_call: . IDENT '(' arguments ')'
+   16 expression: . POSINT
+   17           | . REAL
+   18           | . IDENT array_call
+   19           | . KW_RESULT
+   20           | . KW_TRUE
+   21           | . KW_FALSE
+   22           | . STRING
+   23           | . '(' expression ')'
+   24           | . CAST_INTEGER expression
+   25           | . CAST_BOOLEAN expression
+   26           | . CAST_CHAR expression
+   27           | . CAST_REAL expression
+   28           | . expression '+' expression
+   29           | . expression '-' expression
+   30           | . expression '*' expression
+   31           | . expression '/' expression
+   32           | . expression KW_DIV expression
+   33           | . expression KW_MOD expression
+   34           | . KW_NOT expression
+   35           | . '-' expression
+   36           | . '+' expression
+   37           | . expression '=' expression
+   38           | . expression OP_INEQUAL expression
+   39           | . expression '<' expression
+   40           | . expression '>' expression
+   41           | . expression OP_LESSEQ expression
+   42           | . expression OP_GREATEREQ expression
+   43           | . expression KW_AND expression
+   44           | . expression KW_OR expression
+   45           | . proc_call
    91 instruction: IDENT array_call ASSIGN . expression
   102            | IDENT array_call ASSIGN . LIB_RS '(' ')'
   103            | IDENT array_call ASSIGN . LIB_RI '(' ')'
@@ -2383,7 +3624,7 @@ State 151
    42           | expression . OP_GREATEREQ expression
    43           | expression . KW_AND expression
    44           | expression . KW_OR expression
-   92 instruction: KW_RESULT ASSIGN expression .
+   92 instruction: KW_RESULT ASSIGN expression .  [KW_END, KW_ELSE, KW_UNTIL, ';']
 
     KW_AND        shift, and go to state 123
     KW_DIV        shift, and go to state 124
@@ -2405,8 +3646,30 @@ State 151
 
 State 152
 
-   93 instruction: KW_IF expression KW_THEN . statement
+    4 body: . KW_BEGIN statements KW_END
+    9 statement: . proc_call
+   10          | . instruction
+   11 proc_call: . IDENT '(' arguments ')'
+   90 instruction: . body
+   91            | . IDENT array_call ASSIGN expression
+   92            | . KW_RESULT ASSIGN expression
+   93            | . KW_IF expression KW_THEN statement
+   93            | KW_IF expression KW_THEN . statement
+   94            | . KW_IF expression KW_THEN statement KW_ELSE statement
    94            | KW_IF expression KW_THEN . statement KW_ELSE statement
+   95            | . KW_FOR IDENT array_call ASSIGN expression KW_TO expression KW_DO statement
+   96            | . KW_FOR IDENT array_call ASSIGN expression KW_DOWNTO expression KW_DO statement
+   97            | . KW_WHILE expression KW_DO statement
+   98            | . KW_REPEAT statement KW_UNTIL expression
+   99            | . IDENT ':' statement
+  100            | . KW_GOTO IDENT
+  101            | . KW_RETURN
+  102            | . IDENT array_call ASSIGN LIB_RS '(' ')'
+  103            | . IDENT array_call ASSIGN LIB_RI '(' ')'
+  104            | . IDENT array_call ASSIGN LIB_RR '(' ')'
+  105            | . KW_RESULT ASSIGN LIB_RS '(' ')'
+  106            | . KW_RESULT ASSIGN LIB_RI '(' ')'
+  107            | . KW_RESULT ASSIGN LIB_RR '(' ')'
 
     IDENT      shift, and go to state 50
     KW_BEGIN   shift, and go to state 51
@@ -2434,6 +3697,37 @@ State 153
 
 State 154
 
+   11 proc_call: . IDENT '(' arguments ')'
+   16 expression: . POSINT
+   17           | . REAL
+   18           | . IDENT array_call
+   19           | . KW_RESULT
+   20           | . KW_TRUE
+   21           | . KW_FALSE
+   22           | . STRING
+   23           | . '(' expression ')'
+   24           | . CAST_INTEGER expression
+   25           | . CAST_BOOLEAN expression
+   26           | . CAST_CHAR expression
+   27           | . CAST_REAL expression
+   28           | . expression '+' expression
+   29           | . expression '-' expression
+   30           | . expression '*' expression
+   31           | . expression '/' expression
+   32           | . expression KW_DIV expression
+   33           | . expression KW_MOD expression
+   34           | . KW_NOT expression
+   35           | . '-' expression
+   36           | . '+' expression
+   37           | . expression '=' expression
+   38           | . expression OP_INEQUAL expression
+   39           | . expression '<' expression
+   40           | . expression '>' expression
+   41           | . expression OP_LESSEQ expression
+   42           | . expression OP_GREATEREQ expression
+   43           | . expression KW_AND expression
+   44           | . expression KW_OR expression
+   45           | . proc_call
    98 instruction: KW_REPEAT statement KW_UNTIL . expression
 
     IDENT         shift, and go to state 74
@@ -2458,7 +3752,29 @@ State 154
 
 State 155
 
-   97 instruction: KW_WHILE expression KW_DO . statement
+    4 body: . KW_BEGIN statements KW_END
+    9 statement: . proc_call
+   10          | . instruction
+   11 proc_call: . IDENT '(' arguments ')'
+   90 instruction: . body
+   91            | . IDENT array_call ASSIGN expression
+   92            | . KW_RESULT ASSIGN expression
+   93            | . KW_IF expression KW_THEN statement
+   94            | . KW_IF expression KW_THEN statement KW_ELSE statement
+   95            | . KW_FOR IDENT array_call ASSIGN expression KW_TO expression KW_DO statement
+   96            | . KW_FOR IDENT array_call ASSIGN expression KW_DOWNTO expression KW_DO statement
+   97            | . KW_WHILE expression KW_DO statement
+   97            | KW_WHILE expression KW_DO . statement
+   98            | . KW_REPEAT statement KW_UNTIL expression
+   99            | . IDENT ':' statement
+  100            | . KW_GOTO IDENT
+  101            | . KW_RETURN
+  102            | . IDENT array_call ASSIGN LIB_RS '(' ')'
+  103            | . IDENT array_call ASSIGN LIB_RI '(' ')'
+  104            | . IDENT array_call ASSIGN LIB_RR '(' ')'
+  105            | . KW_RESULT ASSIGN LIB_RS '(' ')'
+  106            | . KW_RESULT ASSIGN LIB_RI '(' ')'
+  107            | . KW_RESULT ASSIGN LIB_RR '(' ')'
 
     IDENT      shift, and go to state 50
     KW_BEGIN   shift, and go to state 51
@@ -2518,7 +3834,13 @@ State 160
 State 161
 
    71 subroutine_decl_list: subroutine_decl_list . subroutine
-   72 subroutine: subroutine_decl type_declaration var_declaration subroutine_decl_list . subroutine_body ';'
+   72 subroutine: . subroutine_decl type_declaration var_declaration subroutine_decl_list subroutine_body ';'
+   72           | subroutine_decl type_declaration var_declaration subroutine_decl_list . subroutine_body ';'
+   73 subroutine_decl: . KW_PROCEDURE IDENT '(' sub_arg_decl_list ')' ';'
+   74                | . KW_PROCEDURE IDENT '(' ')' ';'
+   75                | . KW_FUNCTION IDENT '(' sub_arg_decl_list ')' ':' data_type ';'
+   76                | . KW_FUNCTION IDENT '(' ')' ':' data_type ';'
+   83 subroutine_body: . KW_BEGIN statements KW_END
 
     KW_BEGIN      shift, and go to state 206
     KW_FUNCTION   shift, and go to state 35
@@ -2552,6 +3874,14 @@ State 164
 
 State 165
 
+   46 data_type: . basic_data_type
+   47          | . array_of_type
+   48 basic_data_type: . KW_INTEGER
+   49                | . KW_BOOLEAN
+   50                | . KW_CHAR
+   51                | . KW_REAL
+   52                | . IDENT
+   53 array_of_type: . KW_ARRAY KW_OF basic_data_type
    60 type_decl: IDENT '=' KW_FUNCTION '(' sub_arg_decl_list ')' ':' . data_type ';'
 
     IDENT       shift, and go to state 21
@@ -2578,6 +3908,8 @@ State 167
 
    53 array_of_type: KW_ARRAY . KW_OF basic_data_type
    80 sub_arg_decl: var_ident ':' KW_ARRAY . array_size KW_OF basic_data_type
+   88 array_size: . '[' expression ']'
+   89           | . '[' expression ']' array_size
 
     KW_OF  shift, and go to state 41
     '['    shift, and go to state 42
@@ -2614,7 +3946,7 @@ State 170
    41           | expression . OP_LESSEQ expression
    42           | expression . OP_GREATEREQ expression
    43           | expression . KW_AND expression
-   43           | expression KW_AND expression .
+   43           | expression KW_AND expression .  [KW_END, KW_AND, KW_DO, KW_ELSE, KW_THEN, KW_OR, KW_UNTIL, KW_TO, KW_DOWNTO, ';', ')', ',', ']']
    44           | expression . KW_OR expression
 
     KW_DIV        shift, and go to state 124
@@ -2632,6 +3964,21 @@ State 170
 
     $default  reduce using rule 43 (expression)
 
+    Conflict between rule 43 and token KW_AND resolved as reduce (%left KW_AND).
+    Conflict between rule 43 and token KW_DIV resolved as shift (KW_AND < KW_DIV).
+    Conflict between rule 43 and token KW_MOD resolved as shift (KW_AND < KW_MOD).
+    Conflict between rule 43 and token KW_OR resolved as reduce (KW_OR < KW_AND).
+    Conflict between rule 43 and token OP_INEQUAL resolved as shift (KW_AND < OP_INEQUAL).
+    Conflict between rule 43 and token OP_LESSEQ resolved as shift (KW_AND < OP_LESSEQ).
+    Conflict between rule 43 and token OP_GREATEREQ resolved as shift (KW_AND < OP_GREATEREQ).
+    Conflict between rule 43 and token '=' resolved as shift (KW_AND < '=').
+    Conflict between rule 43 and token '<' resolved as shift (KW_AND < '<').
+    Conflict between rule 43 and token '>' resolved as shift (KW_AND < '>').
+    Conflict between rule 43 and token '-' resolved as shift (KW_AND < '-').
+    Conflict between rule 43 and token '+' resolved as shift (KW_AND < '+').
+    Conflict between rule 43 and token '*' resolved as shift (KW_AND < '*').
+    Conflict between rule 43 and token '/' resolved as shift (KW_AND < '/').
+
 
 State 171
 
@@ -2640,7 +3987,7 @@ State 171
    30           | expression . '*' expression
    31           | expression . '/' expression
    32           | expression . KW_DIV expression
-   32           | expression KW_DIV expression .
+   32           | expression KW_DIV expression .  [KW_END, KW_AND, KW_DIV, KW_MOD, KW_DO, KW_ELSE, KW_THEN, KW_OR, KW_UNTIL, KW_TO, KW_DOWNTO, OP_INEQUAL, OP_LESSEQ, OP_GREATEREQ, '=', '<', '>', '-', '+', '*', '/', ';', ')', ',', ']']
    33           | expression . KW_MOD expression
    37           | expression . '=' expression
    38           | expression . OP_INEQUAL expression
@@ -2653,6 +4000,21 @@ State 171
 
     $default  reduce using rule 32 (expression)
 
+    Conflict between rule 32 and token KW_AND resolved as reduce (KW_AND < KW_DIV).
+    Conflict between rule 32 and token KW_DIV resolved as reduce (%left KW_DIV).
+    Conflict between rule 32 and token KW_MOD resolved as reduce (%left KW_MOD).
+    Conflict between rule 32 and token KW_OR resolved as reduce (KW_OR < KW_DIV).
+    Conflict between rule 32 and token OP_INEQUAL resolved as reduce (OP_INEQUAL < KW_DIV).
+    Conflict between rule 32 and token OP_LESSEQ resolved as reduce (OP_LESSEQ < KW_DIV).
+    Conflict between rule 32 and token OP_GREATEREQ resolved as reduce (OP_GREATEREQ < KW_DIV).
+    Conflict between rule 32 and token '=' resolved as reduce ('=' < KW_DIV).
+    Conflict between rule 32 and token '<' resolved as reduce ('<' < KW_DIV).
+    Conflict between rule 32 and token '>' resolved as reduce ('>' < KW_DIV).
+    Conflict between rule 32 and token '-' resolved as reduce ('-' < KW_DIV).
+    Conflict between rule 32 and token '+' resolved as reduce ('+' < KW_DIV).
+    Conflict between rule 32 and token '*' resolved as reduce (%left '*').
+    Conflict between rule 32 and token '/' resolved as reduce (%left '/').
+
 
 State 172
 
@@ -2662,7 +4024,7 @@ State 172
    31           | expression . '/' expression
    32           | expression . KW_DIV expression
    33           | expression . KW_MOD expression
-   33           | expression KW_MOD expression .
+   33           | expression KW_MOD expression .  [KW_END, KW_AND, KW_DIV, KW_MOD, KW_DO, KW_ELSE, KW_THEN, KW_OR, KW_UNTIL, KW_TO, KW_DOWNTO, OP_INEQUAL, OP_LESSEQ, OP_GREATEREQ, '=', '<', '>', '-', '+', '*', '/', ';', ')', ',', ']']
    37           | expression . '=' expression
    38           | expression . OP_INEQUAL expression
    39           | expression . '<' expression
@@ -2673,6 +4035,21 @@ State 172
    44           | expression . KW_OR expression
 
     $default  reduce using rule 33 (expression)
+
+    Conflict between rule 33 and token KW_AND resolved as reduce (KW_AND < KW_MOD).
+    Conflict between rule 33 and token KW_DIV resolved as reduce (%left KW_DIV).
+    Conflict between rule 33 and token KW_MOD resolved as reduce (%left KW_MOD).
+    Conflict between rule 33 and token KW_OR resolved as reduce (KW_OR < KW_MOD).
+    Conflict between rule 33 and token OP_INEQUAL resolved as reduce (OP_INEQUAL < KW_MOD).
+    Conflict between rule 33 and token OP_LESSEQ resolved as reduce (OP_LESSEQ < KW_MOD).
+    Conflict between rule 33 and token OP_GREATEREQ resolved as reduce (OP_GREATEREQ < KW_MOD).
+    Conflict between rule 33 and token '=' resolved as reduce ('=' < KW_MOD).
+    Conflict between rule 33 and token '<' resolved as reduce ('<' < KW_MOD).
+    Conflict between rule 33 and token '>' resolved as reduce ('>' < KW_MOD).
+    Conflict between rule 33 and token '-' resolved as reduce ('-' < KW_MOD).
+    Conflict between rule 33 and token '+' resolved as reduce ('+' < KW_MOD).
+    Conflict between rule 33 and token '*' resolved as reduce (%left '*').
+    Conflict between rule 33 and token '/' resolved as reduce (%left '/').
 
 
 State 173
@@ -2691,7 +4068,7 @@ State 173
    42           | expression . OP_GREATEREQ expression
    43           | expression . KW_AND expression
    44           | expression . KW_OR expression
-   44           | expression KW_OR expression .
+   44           | expression KW_OR expression .  [KW_END, KW_DO, KW_ELSE, KW_THEN, KW_OR, KW_UNTIL, KW_TO, KW_DOWNTO, ';', ')', ',', ']']
 
     KW_AND        shift, and go to state 123
     KW_DIV        shift, and go to state 124
@@ -2709,6 +4086,21 @@ State 173
 
     $default  reduce using rule 44 (expression)
 
+    Conflict between rule 44 and token KW_AND resolved as shift (KW_OR < KW_AND).
+    Conflict between rule 44 and token KW_DIV resolved as shift (KW_OR < KW_DIV).
+    Conflict between rule 44 and token KW_MOD resolved as shift (KW_OR < KW_MOD).
+    Conflict between rule 44 and token KW_OR resolved as reduce (%left KW_OR).
+    Conflict between rule 44 and token OP_INEQUAL resolved as shift (KW_OR < OP_INEQUAL).
+    Conflict between rule 44 and token OP_LESSEQ resolved as shift (KW_OR < OP_LESSEQ).
+    Conflict between rule 44 and token OP_GREATEREQ resolved as shift (KW_OR < OP_GREATEREQ).
+    Conflict between rule 44 and token '=' resolved as shift (KW_OR < '=').
+    Conflict between rule 44 and token '<' resolved as shift (KW_OR < '<').
+    Conflict between rule 44 and token '>' resolved as shift (KW_OR < '>').
+    Conflict between rule 44 and token '-' resolved as shift (KW_OR < '-').
+    Conflict between rule 44 and token '+' resolved as shift (KW_OR < '+').
+    Conflict between rule 44 and token '*' resolved as shift (KW_OR < '*').
+    Conflict between rule 44 and token '/' resolved as shift (KW_OR < '/').
+
 
 State 174
 
@@ -2720,7 +4112,7 @@ State 174
    33           | expression . KW_MOD expression
    37           | expression . '=' expression
    38           | expression . OP_INEQUAL expression
-   38           | expression OP_INEQUAL expression .
+   38           | expression OP_INEQUAL expression .  [KW_END, KW_AND, KW_DO, KW_ELSE, KW_THEN, KW_OR, KW_UNTIL, KW_TO, KW_DOWNTO, OP_INEQUAL, OP_LESSEQ, OP_GREATEREQ, '=', '<', '>', ';', ')', ',', ']']
    39           | expression . '<' expression
    40           | expression . '>' expression
    41           | expression . OP_LESSEQ expression
@@ -2737,6 +4129,21 @@ State 174
 
     $default  reduce using rule 38 (expression)
 
+    Conflict between rule 38 and token KW_AND resolved as reduce (KW_AND < OP_INEQUAL).
+    Conflict between rule 38 and token KW_DIV resolved as shift (OP_INEQUAL < KW_DIV).
+    Conflict between rule 38 and token KW_MOD resolved as shift (OP_INEQUAL < KW_MOD).
+    Conflict between rule 38 and token KW_OR resolved as reduce (KW_OR < OP_INEQUAL).
+    Conflict between rule 38 and token OP_INEQUAL resolved as reduce (%left OP_INEQUAL).
+    Conflict between rule 38 and token OP_LESSEQ resolved as reduce (%left OP_LESSEQ).
+    Conflict between rule 38 and token OP_GREATEREQ resolved as reduce (%left OP_GREATEREQ).
+    Conflict between rule 38 and token '=' resolved as reduce (%left '=').
+    Conflict between rule 38 and token '<' resolved as reduce (%left '<').
+    Conflict between rule 38 and token '>' resolved as reduce (%left '>').
+    Conflict between rule 38 and token '-' resolved as shift (OP_INEQUAL < '-').
+    Conflict between rule 38 and token '+' resolved as shift (OP_INEQUAL < '+').
+    Conflict between rule 38 and token '*' resolved as shift (OP_INEQUAL < '*').
+    Conflict between rule 38 and token '/' resolved as shift (OP_INEQUAL < '/').
+
 
 State 175
 
@@ -2751,7 +4158,7 @@ State 175
    39           | expression . '<' expression
    40           | expression . '>' expression
    41           | expression . OP_LESSEQ expression
-   41           | expression OP_LESSEQ expression .
+   41           | expression OP_LESSEQ expression .  [KW_END, KW_AND, KW_DO, KW_ELSE, KW_THEN, KW_OR, KW_UNTIL, KW_TO, KW_DOWNTO, OP_INEQUAL, OP_LESSEQ, OP_GREATEREQ, '=', '<', '>', ';', ')', ',', ']']
    42           | expression . OP_GREATEREQ expression
    43           | expression . KW_AND expression
    44           | expression . KW_OR expression
@@ -2764,6 +4171,21 @@ State 175
     '/'     shift, and go to state 136
 
     $default  reduce using rule 41 (expression)
+
+    Conflict between rule 41 and token KW_AND resolved as reduce (KW_AND < OP_LESSEQ).
+    Conflict between rule 41 and token KW_DIV resolved as shift (OP_LESSEQ < KW_DIV).
+    Conflict between rule 41 and token KW_MOD resolved as shift (OP_LESSEQ < KW_MOD).
+    Conflict between rule 41 and token KW_OR resolved as reduce (KW_OR < OP_LESSEQ).
+    Conflict between rule 41 and token OP_INEQUAL resolved as reduce (%left OP_INEQUAL).
+    Conflict between rule 41 and token OP_LESSEQ resolved as reduce (%left OP_LESSEQ).
+    Conflict between rule 41 and token OP_GREATEREQ resolved as reduce (%left OP_GREATEREQ).
+    Conflict between rule 41 and token '=' resolved as reduce (%left '=').
+    Conflict between rule 41 and token '<' resolved as reduce (%left '<').
+    Conflict between rule 41 and token '>' resolved as reduce (%left '>').
+    Conflict between rule 41 and token '-' resolved as shift (OP_LESSEQ < '-').
+    Conflict between rule 41 and token '+' resolved as shift (OP_LESSEQ < '+').
+    Conflict between rule 41 and token '*' resolved as shift (OP_LESSEQ < '*').
+    Conflict between rule 41 and token '/' resolved as shift (OP_LESSEQ < '/').
 
 
 State 176
@@ -2780,7 +4202,7 @@ State 176
    40           | expression . '>' expression
    41           | expression . OP_LESSEQ expression
    42           | expression . OP_GREATEREQ expression
-   42           | expression OP_GREATEREQ expression .
+   42           | expression OP_GREATEREQ expression .  [KW_END, KW_AND, KW_DO, KW_ELSE, KW_THEN, KW_OR, KW_UNTIL, KW_TO, KW_DOWNTO, OP_INEQUAL, OP_LESSEQ, OP_GREATEREQ, '=', '<', '>', ';', ')', ',', ']']
    43           | expression . KW_AND expression
    44           | expression . KW_OR expression
 
@@ -2793,6 +4215,21 @@ State 176
 
     $default  reduce using rule 42 (expression)
 
+    Conflict between rule 42 and token KW_AND resolved as reduce (KW_AND < OP_GREATEREQ).
+    Conflict between rule 42 and token KW_DIV resolved as shift (OP_GREATEREQ < KW_DIV).
+    Conflict between rule 42 and token KW_MOD resolved as shift (OP_GREATEREQ < KW_MOD).
+    Conflict between rule 42 and token KW_OR resolved as reduce (KW_OR < OP_GREATEREQ).
+    Conflict between rule 42 and token OP_INEQUAL resolved as reduce (%left OP_INEQUAL).
+    Conflict between rule 42 and token OP_LESSEQ resolved as reduce (%left OP_LESSEQ).
+    Conflict between rule 42 and token OP_GREATEREQ resolved as reduce (%left OP_GREATEREQ).
+    Conflict between rule 42 and token '=' resolved as reduce (%left '=').
+    Conflict between rule 42 and token '<' resolved as reduce (%left '<').
+    Conflict between rule 42 and token '>' resolved as reduce (%left '>').
+    Conflict between rule 42 and token '-' resolved as shift (OP_GREATEREQ < '-').
+    Conflict between rule 42 and token '+' resolved as shift (OP_GREATEREQ < '+').
+    Conflict between rule 42 and token '*' resolved as shift (OP_GREATEREQ < '*').
+    Conflict between rule 42 and token '/' resolved as shift (OP_GREATEREQ < '/').
+
 
 State 177
 
@@ -2803,7 +4240,7 @@ State 177
    32           | expression . KW_DIV expression
    33           | expression . KW_MOD expression
    37           | expression . '=' expression
-   37           | expression '=' expression .
+   37           | expression '=' expression .  [KW_END, KW_AND, KW_DO, KW_ELSE, KW_THEN, KW_OR, KW_UNTIL, KW_TO, KW_DOWNTO, OP_INEQUAL, OP_LESSEQ, OP_GREATEREQ, '=', '<', '>', ';', ')', ',', ']']
    38           | expression . OP_INEQUAL expression
    39           | expression . '<' expression
    40           | expression . '>' expression
@@ -2821,6 +4258,21 @@ State 177
 
     $default  reduce using rule 37 (expression)
 
+    Conflict between rule 37 and token KW_AND resolved as reduce (KW_AND < '=').
+    Conflict between rule 37 and token KW_DIV resolved as shift ('=' < KW_DIV).
+    Conflict between rule 37 and token KW_MOD resolved as shift ('=' < KW_MOD).
+    Conflict between rule 37 and token KW_OR resolved as reduce (KW_OR < '=').
+    Conflict between rule 37 and token OP_INEQUAL resolved as reduce (%left OP_INEQUAL).
+    Conflict between rule 37 and token OP_LESSEQ resolved as reduce (%left OP_LESSEQ).
+    Conflict between rule 37 and token OP_GREATEREQ resolved as reduce (%left OP_GREATEREQ).
+    Conflict between rule 37 and token '=' resolved as reduce (%left '=').
+    Conflict between rule 37 and token '<' resolved as reduce (%left '<').
+    Conflict between rule 37 and token '>' resolved as reduce (%left '>').
+    Conflict between rule 37 and token '-' resolved as shift ('=' < '-').
+    Conflict between rule 37 and token '+' resolved as shift ('=' < '+').
+    Conflict between rule 37 and token '*' resolved as shift ('=' < '*').
+    Conflict between rule 37 and token '/' resolved as shift ('=' < '/').
+
 
 State 178
 
@@ -2833,7 +4285,7 @@ State 178
    37           | expression . '=' expression
    38           | expression . OP_INEQUAL expression
    39           | expression . '<' expression
-   39           | expression '<' expression .
+   39           | expression '<' expression .  [KW_END, KW_AND, KW_DO, KW_ELSE, KW_THEN, KW_OR, KW_UNTIL, KW_TO, KW_DOWNTO, OP_INEQUAL, OP_LESSEQ, OP_GREATEREQ, '=', '<', '>', ';', ')', ',', ']']
    40           | expression . '>' expression
    41           | expression . OP_LESSEQ expression
    42           | expression . OP_GREATEREQ expression
@@ -2849,6 +4301,21 @@ State 178
 
     $default  reduce using rule 39 (expression)
 
+    Conflict between rule 39 and token KW_AND resolved as reduce (KW_AND < '<').
+    Conflict between rule 39 and token KW_DIV resolved as shift ('<' < KW_DIV).
+    Conflict between rule 39 and token KW_MOD resolved as shift ('<' < KW_MOD).
+    Conflict between rule 39 and token KW_OR resolved as reduce (KW_OR < '<').
+    Conflict between rule 39 and token OP_INEQUAL resolved as reduce (%left OP_INEQUAL).
+    Conflict between rule 39 and token OP_LESSEQ resolved as reduce (%left OP_LESSEQ).
+    Conflict between rule 39 and token OP_GREATEREQ resolved as reduce (%left OP_GREATEREQ).
+    Conflict between rule 39 and token '=' resolved as reduce (%left '=').
+    Conflict between rule 39 and token '<' resolved as reduce (%left '<').
+    Conflict between rule 39 and token '>' resolved as reduce (%left '>').
+    Conflict between rule 39 and token '-' resolved as shift ('<' < '-').
+    Conflict between rule 39 and token '+' resolved as shift ('<' < '+').
+    Conflict between rule 39 and token '*' resolved as shift ('<' < '*').
+    Conflict between rule 39 and token '/' resolved as shift ('<' < '/').
+
 
 State 179
 
@@ -2862,7 +4329,7 @@ State 179
    38           | expression . OP_INEQUAL expression
    39           | expression . '<' expression
    40           | expression . '>' expression
-   40           | expression '>' expression .
+   40           | expression '>' expression .  [KW_END, KW_AND, KW_DO, KW_ELSE, KW_THEN, KW_OR, KW_UNTIL, KW_TO, KW_DOWNTO, OP_INEQUAL, OP_LESSEQ, OP_GREATEREQ, '=', '<', '>', ';', ')', ',', ']']
    41           | expression . OP_LESSEQ expression
    42           | expression . OP_GREATEREQ expression
    43           | expression . KW_AND expression
@@ -2877,12 +4344,27 @@ State 179
 
     $default  reduce using rule 40 (expression)
 
+    Conflict between rule 40 and token KW_AND resolved as reduce (KW_AND < '>').
+    Conflict between rule 40 and token KW_DIV resolved as shift ('>' < KW_DIV).
+    Conflict between rule 40 and token KW_MOD resolved as shift ('>' < KW_MOD).
+    Conflict between rule 40 and token KW_OR resolved as reduce (KW_OR < '>').
+    Conflict between rule 40 and token OP_INEQUAL resolved as reduce (%left OP_INEQUAL).
+    Conflict between rule 40 and token OP_LESSEQ resolved as reduce (%left OP_LESSEQ).
+    Conflict between rule 40 and token OP_GREATEREQ resolved as reduce (%left OP_GREATEREQ).
+    Conflict between rule 40 and token '=' resolved as reduce (%left '=').
+    Conflict between rule 40 and token '<' resolved as reduce (%left '<').
+    Conflict between rule 40 and token '>' resolved as reduce (%left '>').
+    Conflict between rule 40 and token '-' resolved as shift ('>' < '-').
+    Conflict between rule 40 and token '+' resolved as shift ('>' < '+').
+    Conflict between rule 40 and token '*' resolved as shift ('>' < '*').
+    Conflict between rule 40 and token '/' resolved as shift ('>' < '/').
+
 
 State 180
 
    28 expression: expression . '+' expression
    29           | expression . '-' expression
-   29           | expression '-' expression .
+   29           | expression '-' expression .  [KW_END, KW_AND, KW_DO, KW_ELSE, KW_THEN, KW_OR, KW_UNTIL, KW_TO, KW_DOWNTO, OP_INEQUAL, OP_LESSEQ, OP_GREATEREQ, '=', '<', '>', '-', '+', ';', ')', ',', ']']
    30           | expression . '*' expression
    31           | expression . '/' expression
    32           | expression . KW_DIV expression
@@ -2903,11 +4385,26 @@ State 180
 
     $default  reduce using rule 29 (expression)
 
+    Conflict between rule 29 and token KW_AND resolved as reduce (KW_AND < '-').
+    Conflict between rule 29 and token KW_DIV resolved as shift ('-' < KW_DIV).
+    Conflict between rule 29 and token KW_MOD resolved as shift ('-' < KW_MOD).
+    Conflict between rule 29 and token KW_OR resolved as reduce (KW_OR < '-').
+    Conflict between rule 29 and token OP_INEQUAL resolved as reduce (OP_INEQUAL < '-').
+    Conflict between rule 29 and token OP_LESSEQ resolved as reduce (OP_LESSEQ < '-').
+    Conflict between rule 29 and token OP_GREATEREQ resolved as reduce (OP_GREATEREQ < '-').
+    Conflict between rule 29 and token '=' resolved as reduce ('=' < '-').
+    Conflict between rule 29 and token '<' resolved as reduce ('<' < '-').
+    Conflict between rule 29 and token '>' resolved as reduce ('>' < '-').
+    Conflict between rule 29 and token '-' resolved as reduce (%left '-').
+    Conflict between rule 29 and token '+' resolved as reduce (%left '+').
+    Conflict between rule 29 and token '*' resolved as shift ('-' < '*').
+    Conflict between rule 29 and token '/' resolved as shift ('-' < '/').
+
 
 State 181
 
    28 expression: expression . '+' expression
-   28           | expression '+' expression .
+   28           | expression '+' expression .  [KW_END, KW_AND, KW_DO, KW_ELSE, KW_THEN, KW_OR, KW_UNTIL, KW_TO, KW_DOWNTO, OP_INEQUAL, OP_LESSEQ, OP_GREATEREQ, '=', '<', '>', '-', '+', ';', ')', ',', ']']
    29           | expression . '-' expression
    30           | expression . '*' expression
    31           | expression . '/' expression
@@ -2929,13 +4426,28 @@ State 181
 
     $default  reduce using rule 28 (expression)
 
+    Conflict between rule 28 and token KW_AND resolved as reduce (KW_AND < '+').
+    Conflict between rule 28 and token KW_DIV resolved as shift ('+' < KW_DIV).
+    Conflict between rule 28 and token KW_MOD resolved as shift ('+' < KW_MOD).
+    Conflict between rule 28 and token KW_OR resolved as reduce (KW_OR < '+').
+    Conflict between rule 28 and token OP_INEQUAL resolved as reduce (OP_INEQUAL < '+').
+    Conflict between rule 28 and token OP_LESSEQ resolved as reduce (OP_LESSEQ < '+').
+    Conflict between rule 28 and token OP_GREATEREQ resolved as reduce (OP_GREATEREQ < '+').
+    Conflict between rule 28 and token '=' resolved as reduce ('=' < '+').
+    Conflict between rule 28 and token '<' resolved as reduce ('<' < '+').
+    Conflict between rule 28 and token '>' resolved as reduce ('>' < '+').
+    Conflict between rule 28 and token '-' resolved as reduce (%left '-').
+    Conflict between rule 28 and token '+' resolved as reduce (%left '+').
+    Conflict between rule 28 and token '*' resolved as shift ('+' < '*').
+    Conflict between rule 28 and token '/' resolved as shift ('+' < '/').
+
 
 State 182
 
    28 expression: expression . '+' expression
    29           | expression . '-' expression
    30           | expression . '*' expression
-   30           | expression '*' expression .
+   30           | expression '*' expression .  [KW_END, KW_AND, KW_DIV, KW_MOD, KW_DO, KW_ELSE, KW_THEN, KW_OR, KW_UNTIL, KW_TO, KW_DOWNTO, OP_INEQUAL, OP_LESSEQ, OP_GREATEREQ, '=', '<', '>', '-', '+', '*', '/', ';', ')', ',', ']']
    31           | expression . '/' expression
    32           | expression . KW_DIV expression
    33           | expression . KW_MOD expression
@@ -2950,6 +4462,21 @@ State 182
 
     $default  reduce using rule 30 (expression)
 
+    Conflict between rule 30 and token KW_AND resolved as reduce (KW_AND < '*').
+    Conflict between rule 30 and token KW_DIV resolved as reduce (%left KW_DIV).
+    Conflict between rule 30 and token KW_MOD resolved as reduce (%left KW_MOD).
+    Conflict between rule 30 and token KW_OR resolved as reduce (KW_OR < '*').
+    Conflict between rule 30 and token OP_INEQUAL resolved as reduce (OP_INEQUAL < '*').
+    Conflict between rule 30 and token OP_LESSEQ resolved as reduce (OP_LESSEQ < '*').
+    Conflict between rule 30 and token OP_GREATEREQ resolved as reduce (OP_GREATEREQ < '*').
+    Conflict between rule 30 and token '=' resolved as reduce ('=' < '*').
+    Conflict between rule 30 and token '<' resolved as reduce ('<' < '*').
+    Conflict between rule 30 and token '>' resolved as reduce ('>' < '*').
+    Conflict between rule 30 and token '-' resolved as reduce ('-' < '*').
+    Conflict between rule 30 and token '+' resolved as reduce ('+' < '*').
+    Conflict between rule 30 and token '*' resolved as reduce (%left '*').
+    Conflict between rule 30 and token '/' resolved as reduce (%left '/').
+
 
 State 183
 
@@ -2957,7 +4484,7 @@ State 183
    29           | expression . '-' expression
    30           | expression . '*' expression
    31           | expression . '/' expression
-   31           | expression '/' expression .
+   31           | expression '/' expression .  [KW_END, KW_AND, KW_DIV, KW_MOD, KW_DO, KW_ELSE, KW_THEN, KW_OR, KW_UNTIL, KW_TO, KW_DOWNTO, OP_INEQUAL, OP_LESSEQ, OP_GREATEREQ, '=', '<', '>', '-', '+', '*', '/', ';', ')', ',', ']']
    32           | expression . KW_DIV expression
    33           | expression . KW_MOD expression
    37           | expression . '=' expression
@@ -2970,6 +4497,21 @@ State 183
    44           | expression . KW_OR expression
 
     $default  reduce using rule 31 (expression)
+
+    Conflict between rule 31 and token KW_AND resolved as reduce (KW_AND < '/').
+    Conflict between rule 31 and token KW_DIV resolved as reduce (%left KW_DIV).
+    Conflict between rule 31 and token KW_MOD resolved as reduce (%left KW_MOD).
+    Conflict between rule 31 and token KW_OR resolved as reduce (KW_OR < '/').
+    Conflict between rule 31 and token OP_INEQUAL resolved as reduce (OP_INEQUAL < '/').
+    Conflict between rule 31 and token OP_LESSEQ resolved as reduce (OP_LESSEQ < '/').
+    Conflict between rule 31 and token OP_GREATEREQ resolved as reduce (OP_GREATEREQ < '/').
+    Conflict between rule 31 and token '=' resolved as reduce ('=' < '/').
+    Conflict between rule 31 and token '<' resolved as reduce ('<' < '/').
+    Conflict between rule 31 and token '>' resolved as reduce ('>' < '/').
+    Conflict between rule 31 and token '-' resolved as reduce ('-' < '/').
+    Conflict between rule 31 and token '+' resolved as reduce ('+' < '/').
+    Conflict between rule 31 and token '*' resolved as reduce (%left '*').
+    Conflict between rule 31 and token '/' resolved as reduce (%left '/').
 
 
 State 184
@@ -2988,6 +4530,14 @@ State 185
 
 State 186
 
+   46 data_type: . basic_data_type
+   47          | . array_of_type
+   48 basic_data_type: . KW_INTEGER
+   49                | . KW_BOOLEAN
+   50                | . KW_CHAR
+   51                | . KW_REAL
+   52                | . IDENT
+   53 array_of_type: . KW_ARRAY KW_OF basic_data_type
    69 var_decl: var_ident ':' KW_FUNCTION '(' ')' ':' . data_type
 
     IDENT       shift, and go to state 21
@@ -3025,7 +4575,38 @@ State 189
 
 State 190
 
+   11 proc_call: . IDENT '(' arguments ')'
    15 arglist: arglist ',' . expression
+   16 expression: . POSINT
+   17           | . REAL
+   18           | . IDENT array_call
+   19           | . KW_RESULT
+   20           | . KW_TRUE
+   21           | . KW_FALSE
+   22           | . STRING
+   23           | . '(' expression ')'
+   24           | . CAST_INTEGER expression
+   25           | . CAST_BOOLEAN expression
+   26           | . CAST_CHAR expression
+   27           | . CAST_REAL expression
+   28           | . expression '+' expression
+   29           | . expression '-' expression
+   30           | . expression '*' expression
+   31           | . expression '/' expression
+   32           | . expression KW_DIV expression
+   33           | . expression KW_MOD expression
+   34           | . KW_NOT expression
+   35           | . '-' expression
+   36           | . '+' expression
+   37           | . expression '=' expression
+   38           | . expression OP_INEQUAL expression
+   39           | . expression '<' expression
+   40           | . expression '>' expression
+   41           | . expression OP_LESSEQ expression
+   42           | . expression OP_GREATEREQ expression
+   43           | . expression KW_AND expression
+   44           | . expression KW_OR expression
+   45           | . proc_call
 
     IDENT         shift, and go to state 74
     POSINT        shift, and go to state 75
@@ -3084,7 +4665,7 @@ State 194
    42           | expression . OP_GREATEREQ expression
    43           | expression . KW_AND expression
    44           | expression . KW_OR expression
-   91 instruction: IDENT array_call ASSIGN expression .
+   91 instruction: IDENT array_call ASSIGN expression .  [KW_END, KW_ELSE, KW_UNTIL, ';']
 
     KW_AND        shift, and go to state 123
     KW_DIV        shift, and go to state 124
@@ -3127,17 +4708,49 @@ State 197
 
 State 198
 
-   93 instruction: KW_IF expression KW_THEN statement .
+   93 instruction: KW_IF expression KW_THEN statement .  [KW_END, KW_UNTIL, ';']
    94            | KW_IF expression KW_THEN statement . KW_ELSE statement
 
     KW_ELSE  shift, and go to state 221
 
-    KW_ELSE   [reduce using rule 93 (instruction)]
     $default  reduce using rule 93 (instruction)
+
+    Conflict between rule 93 and token KW_ELSE resolved as shift (KW_THEN < KW_ELSE).
 
 
 State 199
 
+   11 proc_call: . IDENT '(' arguments ')'
+   16 expression: . POSINT
+   17           | . REAL
+   18           | . IDENT array_call
+   19           | . KW_RESULT
+   20           | . KW_TRUE
+   21           | . KW_FALSE
+   22           | . STRING
+   23           | . '(' expression ')'
+   24           | . CAST_INTEGER expression
+   25           | . CAST_BOOLEAN expression
+   26           | . CAST_CHAR expression
+   27           | . CAST_REAL expression
+   28           | . expression '+' expression
+   29           | . expression '-' expression
+   30           | . expression '*' expression
+   31           | . expression '/' expression
+   32           | . expression KW_DIV expression
+   33           | . expression KW_MOD expression
+   34           | . KW_NOT expression
+   35           | . '-' expression
+   36           | . '+' expression
+   37           | . expression '=' expression
+   38           | . expression OP_INEQUAL expression
+   39           | . expression '<' expression
+   40           | . expression '>' expression
+   41           | . expression OP_LESSEQ expression
+   42           | . expression OP_GREATEREQ expression
+   43           | . expression KW_AND expression
+   44           | . expression KW_OR expression
+   45           | . proc_call
    95 instruction: KW_FOR IDENT array_call ASSIGN . expression KW_TO expression KW_DO statement
    96            | KW_FOR IDENT array_call ASSIGN . expression KW_DOWNTO expression KW_DO statement
 
@@ -3177,7 +4790,7 @@ State 200
    42           | expression . OP_GREATEREQ expression
    43           | expression . KW_AND expression
    44           | expression . KW_OR expression
-   98 instruction: KW_REPEAT statement KW_UNTIL expression .
+   98 instruction: KW_REPEAT statement KW_UNTIL expression .  [KW_END, KW_ELSE, KW_UNTIL, ';']
 
     KW_AND        shift, and go to state 123
     KW_DIV        shift, and go to state 124
@@ -3206,6 +4819,14 @@ State 201
 
 State 202
 
+   46 data_type: . basic_data_type
+   47          | . array_of_type
+   48 basic_data_type: . KW_INTEGER
+   49                | . KW_BOOLEAN
+   50                | . KW_CHAR
+   51                | . KW_REAL
+   52                | . IDENT
+   53 array_of_type: . KW_ARRAY KW_OF basic_data_type
    76 subroutine_decl: KW_FUNCTION IDENT '(' ')' ':' . data_type ';'
 
     IDENT       shift, and go to state 21
@@ -3243,7 +4864,33 @@ State 205
 
 State 206
 
+    4 body: . KW_BEGIN statements KW_END
+    5 statements: . %empty  [KW_END]
+    6           | . statement_list
+    7 statement_list: . statement
+    8               | . statement_list ';' statement
+    9 statement: . proc_call
+   10          | . instruction
+   11 proc_call: . IDENT '(' arguments ')'
    83 subroutine_body: KW_BEGIN . statements KW_END
+   90 instruction: . body
+   91            | . IDENT array_call ASSIGN expression
+   92            | . KW_RESULT ASSIGN expression
+   93            | . KW_IF expression KW_THEN statement
+   94            | . KW_IF expression KW_THEN statement KW_ELSE statement
+   95            | . KW_FOR IDENT array_call ASSIGN expression KW_TO expression KW_DO statement
+   96            | . KW_FOR IDENT array_call ASSIGN expression KW_DOWNTO expression KW_DO statement
+   97            | . KW_WHILE expression KW_DO statement
+   98            | . KW_REPEAT statement KW_UNTIL expression
+   99            | . IDENT ':' statement
+  100            | . KW_GOTO IDENT
+  101            | . KW_RETURN
+  102            | . IDENT array_call ASSIGN LIB_RS '(' ')'
+  103            | . IDENT array_call ASSIGN LIB_RI '(' ')'
+  104            | . IDENT array_call ASSIGN LIB_RR '(' ')'
+  105            | . KW_RESULT ASSIGN LIB_RS '(' ')'
+  106            | . KW_RESULT ASSIGN LIB_RI '(' ')'
+  107            | . KW_RESULT ASSIGN LIB_RR '(' ')'
 
     IDENT      shift, and go to state 50
     KW_BEGIN   shift, and go to state 51
@@ -3288,8 +4935,16 @@ State 209
 
 State 210
 
-   81 sub_arg_decl: var_ident ':' KW_FUNCTION '(' . sub_arg_decl_list ')' ':' data_type
+   77 sub_arg_decl_list: . sub_arg_decl
+   78                  | . sub_arg_decl_list ';' sub_arg_decl
+   79 sub_arg_decl: . var_ident ':' data_type
+   80             | . var_ident ':' KW_ARRAY array_size KW_OF basic_data_type
+   81             | . var_ident ':' KW_FUNCTION '(' sub_arg_decl_list ')' ':' data_type
+   81             | var_ident ':' KW_FUNCTION '(' . sub_arg_decl_list ')' ':' data_type
+   82             | . var_ident ':' KW_FUNCTION '(' ')' ':' data_type
    82             | var_ident ':' KW_FUNCTION '(' . ')' ':' data_type
+   84 var_ident: . IDENT
+   85          | . IDENT ',' var_ident
 
     IDENT  shift, and go to state 16
     ')'    shift, and go to state 229
@@ -3315,6 +4970,14 @@ State 212
 
 State 213
 
+   46 data_type: . basic_data_type
+   47          | . array_of_type
+   48 basic_data_type: . KW_INTEGER
+   49                | . KW_BOOLEAN
+   50                | . KW_CHAR
+   51                | . KW_REAL
+   52                | . IDENT
+   53 array_of_type: . KW_ARRAY KW_OF basic_data_type
    68 var_decl: var_ident ':' KW_FUNCTION '(' sub_arg_decl_list ')' ':' . data_type
 
     IDENT       shift, and go to state 21
@@ -3331,7 +4994,7 @@ State 213
 
 State 214
 
-   15 arglist: arglist ',' expression .
+   15 arglist: arglist ',' expression .  [')', ',']
    28 expression: expression . '+' expression
    29           | expression . '-' expression
    30           | expression . '*' expression
@@ -3409,7 +5072,29 @@ State 220
 
 State 221
 
-   94 instruction: KW_IF expression KW_THEN statement KW_ELSE . statement
+    4 body: . KW_BEGIN statements KW_END
+    9 statement: . proc_call
+   10          | . instruction
+   11 proc_call: . IDENT '(' arguments ')'
+   90 instruction: . body
+   91            | . IDENT array_call ASSIGN expression
+   92            | . KW_RESULT ASSIGN expression
+   93            | . KW_IF expression KW_THEN statement
+   94            | . KW_IF expression KW_THEN statement KW_ELSE statement
+   94            | KW_IF expression KW_THEN statement KW_ELSE . statement
+   95            | . KW_FOR IDENT array_call ASSIGN expression KW_TO expression KW_DO statement
+   96            | . KW_FOR IDENT array_call ASSIGN expression KW_DOWNTO expression KW_DO statement
+   97            | . KW_WHILE expression KW_DO statement
+   98            | . KW_REPEAT statement KW_UNTIL expression
+   99            | . IDENT ':' statement
+  100            | . KW_GOTO IDENT
+  101            | . KW_RETURN
+  102            | . IDENT array_call ASSIGN LIB_RS '(' ')'
+  103            | . IDENT array_call ASSIGN LIB_RI '(' ')'
+  104            | . IDENT array_call ASSIGN LIB_RR '(' ')'
+  105            | . KW_RESULT ASSIGN LIB_RS '(' ')'
+  106            | . KW_RESULT ASSIGN LIB_RI '(' ')'
+  107            | . KW_RESULT ASSIGN LIB_RR '(' ')'
 
     IDENT      shift, and go to state 50
     KW_BEGIN   shift, and go to state 51
@@ -3473,6 +5158,14 @@ State 223
 
 State 224
 
+   46 data_type: . basic_data_type
+   47          | . array_of_type
+   48 basic_data_type: . KW_INTEGER
+   49                | . KW_BOOLEAN
+   50                | . KW_CHAR
+   51                | . KW_REAL
+   52                | . IDENT
+   53 array_of_type: . KW_ARRAY KW_OF basic_data_type
    75 subroutine_decl: KW_FUNCTION IDENT '(' sub_arg_decl_list ')' ':' . data_type ';'
 
     IDENT       shift, and go to state 21
@@ -3533,6 +5226,11 @@ State 230
 
 State 231
 
+   48 basic_data_type: . KW_INTEGER
+   49                | . KW_BOOLEAN
+   50                | . KW_CHAR
+   51                | . KW_REAL
+   52                | . IDENT
    80 sub_arg_decl: var_ident ':' KW_ARRAY array_size KW_OF . basic_data_type
 
     IDENT       shift, and go to state 21
@@ -3581,6 +5279,37 @@ State 236
 
 State 237
 
+   11 proc_call: . IDENT '(' arguments ')'
+   16 expression: . POSINT
+   17           | . REAL
+   18           | . IDENT array_call
+   19           | . KW_RESULT
+   20           | . KW_TRUE
+   21           | . KW_FALSE
+   22           | . STRING
+   23           | . '(' expression ')'
+   24           | . CAST_INTEGER expression
+   25           | . CAST_BOOLEAN expression
+   26           | . CAST_CHAR expression
+   27           | . CAST_REAL expression
+   28           | . expression '+' expression
+   29           | . expression '-' expression
+   30           | . expression '*' expression
+   31           | . expression '/' expression
+   32           | . expression KW_DIV expression
+   33           | . expression KW_MOD expression
+   34           | . KW_NOT expression
+   35           | . '-' expression
+   36           | . '+' expression
+   37           | . expression '=' expression
+   38           | . expression OP_INEQUAL expression
+   39           | . expression '<' expression
+   40           | . expression '>' expression
+   41           | . expression OP_LESSEQ expression
+   42           | . expression OP_GREATEREQ expression
+   43           | . expression KW_AND expression
+   44           | . expression KW_OR expression
+   45           | . proc_call
    95 instruction: KW_FOR IDENT array_call ASSIGN expression KW_TO . expression KW_DO statement
 
     IDENT         shift, and go to state 74
@@ -3605,6 +5334,37 @@ State 237
 
 State 238
 
+   11 proc_call: . IDENT '(' arguments ')'
+   16 expression: . POSINT
+   17           | . REAL
+   18           | . IDENT array_call
+   19           | . KW_RESULT
+   20           | . KW_TRUE
+   21           | . KW_FALSE
+   22           | . STRING
+   23           | . '(' expression ')'
+   24           | . CAST_INTEGER expression
+   25           | . CAST_BOOLEAN expression
+   26           | . CAST_CHAR expression
+   27           | . CAST_REAL expression
+   28           | . expression '+' expression
+   29           | . expression '-' expression
+   30           | . expression '*' expression
+   31           | . expression '/' expression
+   32           | . expression KW_DIV expression
+   33           | . expression KW_MOD expression
+   34           | . KW_NOT expression
+   35           | . '-' expression
+   36           | . '+' expression
+   37           | . expression '=' expression
+   38           | . expression OP_INEQUAL expression
+   39           | . expression '<' expression
+   40           | . expression '>' expression
+   41           | . expression OP_LESSEQ expression
+   42           | . expression OP_GREATEREQ expression
+   43           | . expression KW_AND expression
+   44           | . expression KW_OR expression
+   45           | . proc_call
    96 instruction: KW_FOR IDENT array_call ASSIGN expression KW_DOWNTO . expression KW_DO statement
 
     IDENT         shift, and go to state 74
@@ -3650,6 +5410,14 @@ State 241
 
 State 242
 
+   46 data_type: . basic_data_type
+   47          | . array_of_type
+   48 basic_data_type: . KW_INTEGER
+   49                | . KW_BOOLEAN
+   50                | . KW_CHAR
+   51                | . KW_REAL
+   52                | . IDENT
+   53 array_of_type: . KW_ARRAY KW_OF basic_data_type
    82 sub_arg_decl: var_ident ':' KW_FUNCTION '(' ')' ':' . data_type
 
     IDENT       shift, and go to state 21
@@ -3764,6 +5532,14 @@ State 248
 
 State 249
 
+   46 data_type: . basic_data_type
+   47          | . array_of_type
+   48 basic_data_type: . KW_INTEGER
+   49                | . KW_BOOLEAN
+   50                | . KW_CHAR
+   51                | . KW_REAL
+   52                | . IDENT
+   53 array_of_type: . KW_ARRAY KW_OF basic_data_type
    81 sub_arg_decl: var_ident ':' KW_FUNCTION '(' sub_arg_decl_list ')' ':' . data_type
 
     IDENT       shift, and go to state 21
@@ -3780,7 +5556,29 @@ State 249
 
 State 250
 
-   95 instruction: KW_FOR IDENT array_call ASSIGN expression KW_TO expression KW_DO . statement
+    4 body: . KW_BEGIN statements KW_END
+    9 statement: . proc_call
+   10          | . instruction
+   11 proc_call: . IDENT '(' arguments ')'
+   90 instruction: . body
+   91            | . IDENT array_call ASSIGN expression
+   92            | . KW_RESULT ASSIGN expression
+   93            | . KW_IF expression KW_THEN statement
+   94            | . KW_IF expression KW_THEN statement KW_ELSE statement
+   95            | . KW_FOR IDENT array_call ASSIGN expression KW_TO expression KW_DO statement
+   95            | KW_FOR IDENT array_call ASSIGN expression KW_TO expression KW_DO . statement
+   96            | . KW_FOR IDENT array_call ASSIGN expression KW_DOWNTO expression KW_DO statement
+   97            | . KW_WHILE expression KW_DO statement
+   98            | . KW_REPEAT statement KW_UNTIL expression
+   99            | . IDENT ':' statement
+  100            | . KW_GOTO IDENT
+  101            | . KW_RETURN
+  102            | . IDENT array_call ASSIGN LIB_RS '(' ')'
+  103            | . IDENT array_call ASSIGN LIB_RI '(' ')'
+  104            | . IDENT array_call ASSIGN LIB_RR '(' ')'
+  105            | . KW_RESULT ASSIGN LIB_RS '(' ')'
+  106            | . KW_RESULT ASSIGN LIB_RI '(' ')'
+  107            | . KW_RESULT ASSIGN LIB_RR '(' ')'
 
     IDENT      shift, and go to state 50
     KW_BEGIN   shift, and go to state 51
@@ -3800,7 +5598,29 @@ State 250
 
 State 251
 
-   96 instruction: KW_FOR IDENT array_call ASSIGN expression KW_DOWNTO expression KW_DO . statement
+    4 body: . KW_BEGIN statements KW_END
+    9 statement: . proc_call
+   10          | . instruction
+   11 proc_call: . IDENT '(' arguments ')'
+   90 instruction: . body
+   91            | . IDENT array_call ASSIGN expression
+   92            | . KW_RESULT ASSIGN expression
+   93            | . KW_IF expression KW_THEN statement
+   94            | . KW_IF expression KW_THEN statement KW_ELSE statement
+   95            | . KW_FOR IDENT array_call ASSIGN expression KW_TO expression KW_DO statement
+   96            | . KW_FOR IDENT array_call ASSIGN expression KW_DOWNTO expression KW_DO statement
+   96            | KW_FOR IDENT array_call ASSIGN expression KW_DOWNTO expression KW_DO . statement
+   97            | . KW_WHILE expression KW_DO statement
+   98            | . KW_REPEAT statement KW_UNTIL expression
+   99            | . IDENT ':' statement
+  100            | . KW_GOTO IDENT
+  101            | . KW_RETURN
+  102            | . IDENT array_call ASSIGN LIB_RS '(' ')'
+  103            | . IDENT array_call ASSIGN LIB_RI '(' ')'
+  104            | . IDENT array_call ASSIGN LIB_RR '(' ')'
+  105            | . KW_RESULT ASSIGN LIB_RS '(' ')'
+  106            | . KW_RESULT ASSIGN LIB_RI '(' ')'
+  107            | . KW_RESULT ASSIGN LIB_RR '(' ')'
 
     IDENT      shift, and go to state 50
     KW_BEGIN   shift, and go to state 51
