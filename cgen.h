@@ -43,6 +43,10 @@ extern const char* c_prologue;
 */
 char* string_ptuc2c(char* P);
 
+/*
+ Tokenize function arguments upon declaration in order to support
+ many declarations of the same type seperated by comma.
+*/
 char* fix_subroutine_idents (char* idents, char* data_type, char* array_size);
 
 

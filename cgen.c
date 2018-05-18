@@ -55,14 +55,19 @@ char* fix_subroutine_idents (char* idents, char* data_type, char* array_size) {
 	char* result;
 	char* token;
 	token = strtok(idents, ",");
+	
+	// Tokenize first argument
+	// 1st case: argument is a fixed array
 	if (token != NULL && array_size != NULL) {
 		result = template("%s %s%s", data_type, token, array_size);
 		token = strtok(NULL, ",");
+	// else
 	} else if (token != NULL && array_size == NULL) {
 		result = template("%s %s", data_type, token);
 		token = strtok(NULL, ",");
 	}
-		
+	
+	// Tokenize rest arguments
 	while (token != NULL) {
 		if (array_size != NULL) {
 			result = template("%s, %s%s%s", result, data_type, token, array_size);
