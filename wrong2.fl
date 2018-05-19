@@ -1,0 +1,49 @@
+// Wrong fl program. Compiler should produce an error.
+
+program wrong2;
+
+@defmacro N 100
+
+var
+	// Error: complex return types not allowed in arrays. Should have been array[N+1][N] of integer to work as designed!
+	x : array [N+1] of array [N] of integer;
+	i, j, temp : integer;
+
+function getArrayIndex(i, j: integer): integer;
+begin
+	result := x[i][j];
+	return
+end;
+
+procedure printArrayIndex();
+var
+	i, j: integer;
+
+begin
+	writeString('\nGive me x dimension(up to 100): ');
+	i := readInteger();
+	writeString('\nGive me y dimension(up to 100): ');
+	j := readInteger();
+	writeString('\n\nArray index in [');
+	writeInteger(i);
+	writeString('][');
+	writeInteger(j);
+	writeString('] is: ');
+	writeInteger(getArrayIndex(i, j));
+	writeString('\n')
+end;
+	
+	
+begin
+	temp := 0;
+	for i := 0 to N do
+	begin
+		for j := 0 to N do
+		begin
+			x[i][j] := temp;
+			temp := temp + 1
+		end
+	end;
+	
+	printArrayIndex()
+end.

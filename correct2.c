@@ -23,12 +23,7 @@ double powerTo(double number, int power)
 	{
 	for (i = 0; i >= power + 1; i--) result = (double) result / number;
 	}
-	else 
-	{
-	if (power == 0) result = 1;
-	else result = 0;
-	}
-	if (result > 0 && number < 0) result = -result;
+	else result = 1;
 	return result;
 }
 

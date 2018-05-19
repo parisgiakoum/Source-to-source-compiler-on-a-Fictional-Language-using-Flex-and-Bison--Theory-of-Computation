@@ -1,0 +1,26 @@
+// Wrong fl program. Compiler should produce an error.
+
+program wrong1;
+
+@defmacro N 10
+
+var
+	i: integer;
+	
+procedure printInputs(x: real; i: integer);
+begin
+	writeString('\nInput ');
+	writeInteger(i+1);
+	writeString(': ');
+	writeReal(x)
+end;
+	
+begin
+	for i := 0 to N do
+	begin
+		x : real;				// A declaration not permitted
+		writeString('\nGive me a real number: ');
+		x := readReal();
+		printInputs(x, i)
+	end
+end.

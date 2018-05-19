@@ -4,26 +4,27 @@
 /* Program mysample */ 
 
 /* Type declaration: */
-typedef char* foo;
-typedef char iodjei;
-typedef foo testarray[10];
-typedef foo (*transformation)(foo x, foo y, int z);
-typedef iodjei (*transformation1)();
+	typedef char* foo;
+	typedef char iodjei;
+	typedef foo testarray[10];
+	typedef foo (*transformation)(foo x, foo y, int z);
+	typedef iodjei (*transformation1)();
 
 /* Variable declaration: */
-int i;
-double x, y;
-char s, testar2[80];
-int t[2];
-char* stringvar;
-foo testarraye;
-foo (*testfuncpoint)(foo x, foo y, int (*testfuncpoint2)(int t, int ps), char z, char u);
-int (*testfuncpoint1)();
+	int i;
+	double x, y;
+	char s, testar2[80];
+	int t[2];
+	char* stringvar;
+	foo testarraye;
+	foo (*testfuncpoint)(foo x, foo y, int (*testfuncpoint2)(int t, int ps), char z, char u);
+	int (*testfuncpoint1)();
 
 /* Function declaration: */
 void add(int n, int k, int g[10], int h[10], int f[10])
 {
 	typedef int int1;
+
 	int1 j;
 
 	j = n + k;
@@ -34,7 +35,6 @@ void add(int n, int k, int g[10], int h[10], int f[10])
 int cube(int i)
 {
 	int result;
-		
 	result = i * i * i;
 	return result;
 }
@@ -91,7 +91,7 @@ int main() {
 	writeString("i= ");
 	writeInteger(i);
 	writeString("\n");
-	i = (int)i - 1;
+	i = (int) i - 1;
 	}
 	while (!(i < 0));
 	scanf("%s", &testar2);
@@ -114,7 +114,6 @@ int main() {
 	writeString("onelseif\n");
 	}
 
-return 0;
-
+	return 0;
 }
  

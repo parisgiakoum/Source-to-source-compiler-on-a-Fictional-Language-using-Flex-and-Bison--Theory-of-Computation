@@ -25,11 +25,7 @@ begin
 		for i := 0 downto power+1 do 
 			result:= (real) result/number
 	end
-	else begin
-		if power = 0 then result := 1
-		else result := 0
-	end;
-	if result > 0 and number < 0 then result := -result;
+		else result := 1;
 	return
 end;
 	
