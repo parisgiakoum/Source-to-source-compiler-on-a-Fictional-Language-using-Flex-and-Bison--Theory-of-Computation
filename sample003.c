@@ -4,9 +4,7 @@
 /* Program print_pi */ 
 
 /* Type declaration: */
-
 /* Variable declaration: */
-
 /* Function declaration: */
 /* Main: */
 int main() {
@@ -20,7 +18,6 @@ int main() {
 	writeReal((3.1415927 * 2));
 	writeString("\n");
 
-return 0;
-
+	return 0;
 }
  

@@ -45,16 +45,9 @@ char* string_ptuc2c(char* P)
 	/* Just check and change the first and last characters */
 	int Plen = strlen(P);
 	assert(Plen>=2);
-	
-	// variable is string
-	if (Plen>=4) {
-		P[0] = '"';
-		P[Plen-1] = '"';
-	// variable is char
-	} else {
-		P[0] = '\'';
-		P[Plen-1] = '\'';
-	}
+	P[0] = '"';
+	P[Plen-1] = '"';
+
 	return P;
 }
 

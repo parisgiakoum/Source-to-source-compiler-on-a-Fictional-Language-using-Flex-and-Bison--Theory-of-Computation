@@ -93,7 +93,7 @@ int main() {
 	writeString("\n");
 	i = (int) i - 1;
 	}
-	while (!(i < 0));
+	while (!((i < 0)));
 	scanf("%s", &testar2);
 	writeString(testar2);
 	writeString("\n\n");

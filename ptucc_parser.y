@@ -108,7 +108,6 @@ extern int line_num;
 %precedence KW_THEN
 %precedence KW_ELSE
 
-
 %%
 
 program:  program_decl type_declaration var_declaration subroutine_decl_list main_body '.'  		
@@ -204,11 +203,11 @@ type_decl: IDENT '=' data_type ';'																			{ $$ = template("\ttypedef 
 		 | IDENT '=' KW_FUNCTION '(' sub_arg_decl_list ')' ':' data_type ';'								{ $$ = template("\ttypedef %s (*%s)(%s);\n", $8, $1, $5); };
 		 | IDENT '=' KW_FUNCTION '(' ')' ':' data_type ';'													{ $$ = template("\ttypedef %s (*%s)();\n", $7, $1); };
 			  
-var_declaration:									{ $$ = ""; };
-			   | KW_VAR var_decl_list ';'			{ $$ = template("%s\n", $2); };
+var_declaration:																							{ $$ = ""; };
+			   | KW_VAR var_decl_list ';'																	{ $$ = template("%s\n", $2); };
 		
-var_decl_list: var_decl									{ $$ = $1; };
-			 | var_decl_list ';' var_decl				{ $$ = template("%s%s", $1, $3);  };
+var_decl_list: var_decl																						{ $$ = $1; };
+			 | var_decl_list ';' var_decl																	{ $$ = template("%s%s", $1, $3);  };
 
 var_decl: var_ident ':' data_type																			{ $$ = template("\t%s %s;\n", $3, $1); };
 		| var_ident ':' KW_ARRAY array_size KW_OF basic_data_type 											{ $$ = template("\t%s %s%s;\n", $6, $1, $4); };
@@ -239,10 +238,10 @@ var_ident: IDENT																							{ $$ = template("%s", $1); };
 		 | IDENT ',' var_ident																				{ $$ = template("%s, %s", $1, $3); };
 		 
 array_call:																	 								{ $$ = ""; };
-		  | array_size						{ $$ = $1; };
+		  | array_size																						{ $$ = $1; };
 		 
-array_size: '[' expression ']'						{ $$ = template("[%s]", $2); };
-		  | '[' expression ']' array_size			{ $$ = template("[%s]%s", $2, $4); };
+array_size: '[' expression ']'																				{ $$ = template("[%s]", $2); };
+		  | '[' expression ']' array_size																	{ $$ = template("[%s]%s", $2, $4); };
 		  
 instruction: body 																							{ $$ = $1; };
 		   | IDENT array_call ASSIGN expression																{ $$ = template("%s%s = %s;\n", $1, $2, $4); };
@@ -252,7 +251,7 @@ instruction: body 																							{ $$ = $1; };
 		   | KW_FOR IDENT array_call ASSIGN expression KW_TO expression KW_DO statement					    { $$ = template("for (%s%s = %s; %s%s <= %s; %s%s++) %s", $2, $3, $5, $2, $3, $7, $2, $3, $9); };
 		   | KW_FOR IDENT array_call ASSIGN expression KW_DOWNTO expression KW_DO statement					{ $$ = template("for (%s%s = %s; %s%s >= %s; %s%s--) %s", $2, $3, $5, $2, $3, $7, $2, $3, $9); };
 		   | KW_WHILE expression KW_DO statement															{ $$ = template("while (%s) %s", $2, $4); };
-		   | KW_REPEAT statement KW_UNTIL expression														{ $$ = template("do%s\twhile (!%s);\n", $2, $4); };
+		   | KW_REPEAT statement KW_UNTIL expression														{ $$ = template("do%s\twhile (!(%s));\n", $2, $4); };
 		   | IDENT ':' statement																			{ $$ = template("%s:%s", $1, $3); };
 		   | KW_GOTO IDENT																					{ $$ = template("goto %s;\n", $2); };
 		   | KW_RETURN																						{ $$ = template("return result;\n"); };

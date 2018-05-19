@@ -4,16 +4,14 @@
 /* Program MaximumSubarraySum */ 
 
 /* Type declaration: */
-
 /* Variable declaration: */
-int arr[5];
-int n, max_sum, i;
+	int n, max_sum, i;
+	int arr[1000];
 
 /* Function declaration: */
 int max2(int a, int b)
 {
 	int result;
-		
 	if (a > b) result = a;
 	else result = b;
 	return result;
@@ -22,15 +20,14 @@ int max2(int a, int b)
 int max(int a, int b, int c)
 {
 	int result;
-		
 	result = max2(max2(a,b),c);
 	return result;
 }
 
-int maxCrossingSum(int arr[5], int l, int m, int h)
+int maxCrossingSum(int arr[1000], int l, int m, int h)
 {
 	int result;
-		int sum, left_sum, right_sum, i;
+	int sum, left_sum, right_sum, i;
 
 	sum = 0;
 	left_sum = -32767;
@@ -50,10 +47,10 @@ int maxCrossingSum(int arr[5], int l, int m, int h)
 	return result;
 }
 
-int maxSubArraySum(int arr[5], int l, int h)
+int maxSubArraySum(int arr[1000], int l, int h)
 {
 	int result;
-		int m;
+	int m;
 
 	if (l == h) 
 	{
@@ -83,7 +80,6 @@ int main() {
 	writeInteger(max_sum);
 	writeString("\n");
 
-return 0;
-
+	return 0;
 }
  

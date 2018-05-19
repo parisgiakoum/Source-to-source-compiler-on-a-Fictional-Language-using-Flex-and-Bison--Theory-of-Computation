@@ -3,9 +3,12 @@
 
 program MaximumSubarraySum;
 
+// Max array size
+@defmacro N 1000
+
 var
-	arr: array [5] of integer;
 	n, max_sum, i : integer;
+	arr: array [N] of integer;
 
 // A utility funtion to find maximum of two integers
 function max2(a, b:integer): integer;
@@ -13,7 +16,7 @@ begin
 	if a > b then
 		result := a
 	else
-		result := b	
+		result := b;
 	return
 end;
 
@@ -25,7 +28,7 @@ begin
 end;
 
 // Find the maximum possible sum in arr[] such that arr[m] is part of it
-function maxCrossingSum(arr: array [5] of integer; l, m, h: integer): integer;
+function maxCrossingSum(arr: array [N] of integer; l, m, h: integer): integer;
 
 var
 	sum, left_sum, right_sum, i: integer;
@@ -57,7 +60,7 @@ begin
 end;
 
 // Returns maximum sum of subarray arr[l..h]
-function maxSubArraySum(arr: array [5] of integer; l, h: integer): integer;
+function maxSubArraySum(arr: array [N] of integer; l, h: integer): integer;
 var
 	m : integer;
 	
@@ -81,6 +84,7 @@ begin
 	return
 end;
 
+// Main
 begin
 	writeString("\nThis is a correct Divide and Conquer based program for maximum subarray sum problem in fl!\n\n");
 	writeString("Give me the size of your array: ");

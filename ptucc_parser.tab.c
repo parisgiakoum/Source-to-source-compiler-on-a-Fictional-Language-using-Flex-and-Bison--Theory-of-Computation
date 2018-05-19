@@ -487,17 +487,17 @@ static const yytype_uint8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint16 yyrline[] =
 {
-       0,   114,   114,   130,   132,   134,   136,   137,   139,   140,
-     143,   144,   146,   148,   149,   151,   152,   154,   155,   156,
-     157,   158,   159,   160,   161,   162,   163,   164,   165,   166,
-     167,   168,   169,   170,   171,   172,   173,   174,   175,   176,
-     177,   178,   179,   180,   181,   182,   183,   185,   186,   188,
-     189,   190,   191,   192,   194,   196,   197,   199,   200,   202,
-     203,   204,   205,   207,   208,   210,   211,   213,   214,   215,
-     216,   218,   219,   221,   223,   224,   225,   226,   228,   229,
-     231,   232,   233,   234,   236,   238,   239,   241,   242,   244,
-     245,   247,   248,   249,   250,   251,   252,   253,   254,   255,
-     256,   257,   258,   259,   260,   261,   262,   263,   264
+       0,   113,   113,   129,   131,   133,   135,   136,   138,   139,
+     142,   143,   145,   147,   148,   150,   151,   153,   154,   155,
+     156,   157,   158,   159,   160,   161,   162,   163,   164,   165,
+     166,   167,   168,   169,   170,   171,   172,   173,   174,   175,
+     176,   177,   178,   179,   180,   181,   182,   184,   185,   187,
+     188,   189,   190,   191,   193,   195,   196,   198,   199,   201,
+     202,   203,   204,   206,   207,   209,   210,   212,   213,   214,
+     215,   217,   218,   220,   222,   223,   224,   225,   227,   228,
+     230,   231,   232,   233,   235,   237,   238,   240,   241,   243,
+     244,   246,   247,   248,   249,   250,   251,   252,   253,   254,
+     255,   256,   257,   258,   259,   260,   261,   262,   263
 };
 #endif
 
@@ -1494,7 +1494,7 @@ yyreduce:
   switch (yyn)
     {
         case 2:
-#line 115 "ptucc_parser.y" /* yacc.c:1646  */
+#line 114 "ptucc_parser.y" /* yacc.c:1646  */
     { 
 	/* We have a successful parse! 
 		Check for any errors and generate output. 
@@ -1512,631 +1512,631 @@ yyreduce:
     break;
 
   case 3:
-#line 130 "ptucc_parser.y" /* yacc.c:1646  */
+#line 129 "ptucc_parser.y" /* yacc.c:1646  */
     { (yyval.crepr) = (yyvsp[-1].crepr); }
 #line 1518 "ptucc_parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 4:
-#line 132 "ptucc_parser.y" /* yacc.c:1646  */
+#line 131 "ptucc_parser.y" /* yacc.c:1646  */
     { (yyval.crepr) = template("{\n\t%s\n\treturn 0;\n}\n", (yyvsp[-1].crepr)); }
 #line 1524 "ptucc_parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 5:
-#line 134 "ptucc_parser.y" /* yacc.c:1646  */
+#line 133 "ptucc_parser.y" /* yacc.c:1646  */
     { (yyval.crepr) = template("\n\t{\n\t%s\t}\n", (yyvsp[-1].crepr)); }
 #line 1530 "ptucc_parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 6:
-#line 136 "ptucc_parser.y" /* yacc.c:1646  */
+#line 135 "ptucc_parser.y" /* yacc.c:1646  */
     { (yyval.crepr) = ""; }
 #line 1536 "ptucc_parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 7:
-#line 137 "ptucc_parser.y" /* yacc.c:1646  */
+#line 136 "ptucc_parser.y" /* yacc.c:1646  */
     { (yyval.crepr) = (yyvsp[0].crepr); }
 #line 1542 "ptucc_parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 9:
-#line 140 "ptucc_parser.y" /* yacc.c:1646  */
+#line 139 "ptucc_parser.y" /* yacc.c:1646  */
     { (yyval.crepr) = template("%s\t%s", (yyvsp[-2].crepr), (yyvsp[0].crepr)); }
 #line 1548 "ptucc_parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 10:
-#line 143 "ptucc_parser.y" /* yacc.c:1646  */
+#line 142 "ptucc_parser.y" /* yacc.c:1646  */
     { (yyval.crepr) = template("%s;\n", (yyvsp[0].crepr)); }
 #line 1554 "ptucc_parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 11:
-#line 144 "ptucc_parser.y" /* yacc.c:1646  */
+#line 143 "ptucc_parser.y" /* yacc.c:1646  */
     { (yyval.crepr) = template("%s", (yyvsp[0].crepr)); }
 #line 1560 "ptucc_parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 12:
-#line 146 "ptucc_parser.y" /* yacc.c:1646  */
+#line 145 "ptucc_parser.y" /* yacc.c:1646  */
     { (yyval.crepr) = template("%s(%s)", (yyvsp[-3].crepr), (yyvsp[-1].crepr)); }
 #line 1566 "ptucc_parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 13:
-#line 148 "ptucc_parser.y" /* yacc.c:1646  */
+#line 147 "ptucc_parser.y" /* yacc.c:1646  */
     { (yyval.crepr) = ""; }
 #line 1572 "ptucc_parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 14:
-#line 149 "ptucc_parser.y" /* yacc.c:1646  */
+#line 148 "ptucc_parser.y" /* yacc.c:1646  */
     { (yyval.crepr) = (yyvsp[0].crepr); }
 #line 1578 "ptucc_parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 15:
-#line 151 "ptucc_parser.y" /* yacc.c:1646  */
+#line 150 "ptucc_parser.y" /* yacc.c:1646  */
     { (yyval.crepr) = (yyvsp[0].crepr); }
 #line 1584 "ptucc_parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 16:
-#line 152 "ptucc_parser.y" /* yacc.c:1646  */
+#line 151 "ptucc_parser.y" /* yacc.c:1646  */
     { (yyval.crepr) = template("%s,%s", (yyvsp[-2].crepr), (yyvsp[0].crepr)); }
 #line 1590 "ptucc_parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 17:
-#line 154 "ptucc_parser.y" /* yacc.c:1646  */
+#line 153 "ptucc_parser.y" /* yacc.c:1646  */
     { (yyval.crepr) = template("%s",(yyvsp[0].crepr)); }
 #line 1596 "ptucc_parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 18:
-#line 155 "ptucc_parser.y" /* yacc.c:1646  */
+#line 154 "ptucc_parser.y" /* yacc.c:1646  */
     { (yyval.crepr) = template("%s",(yyvsp[0].crepr)); }
 #line 1602 "ptucc_parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 19:
-#line 156 "ptucc_parser.y" /* yacc.c:1646  */
+#line 155 "ptucc_parser.y" /* yacc.c:1646  */
     { (yyval.crepr) = template("%s%s", (yyvsp[-1].crepr), (yyvsp[0].crepr)); }
 #line 1608 "ptucc_parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 20:
-#line 157 "ptucc_parser.y" /* yacc.c:1646  */
+#line 156 "ptucc_parser.y" /* yacc.c:1646  */
     { (yyval.crepr) = template("result"); }
 #line 1614 "ptucc_parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 21:
-#line 158 "ptucc_parser.y" /* yacc.c:1646  */
+#line 157 "ptucc_parser.y" /* yacc.c:1646  */
     { (yyval.crepr) = template("1"); }
 #line 1620 "ptucc_parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 22:
-#line 159 "ptucc_parser.y" /* yacc.c:1646  */
+#line 158 "ptucc_parser.y" /* yacc.c:1646  */
     { (yyval.crepr) = template("0"); }
 #line 1626 "ptucc_parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 23:
-#line 160 "ptucc_parser.y" /* yacc.c:1646  */
+#line 159 "ptucc_parser.y" /* yacc.c:1646  */
     { (yyval.crepr) = string_ptuc2c((yyvsp[0].crepr)); }
 #line 1632 "ptucc_parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 24:
-#line 161 "ptucc_parser.y" /* yacc.c:1646  */
+#line 160 "ptucc_parser.y" /* yacc.c:1646  */
     { (yyval.crepr) = template("(%s)", (yyvsp[-1].crepr)); }
 #line 1638 "ptucc_parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 25:
-#line 162 "ptucc_parser.y" /* yacc.c:1646  */
+#line 161 "ptucc_parser.y" /* yacc.c:1646  */
     { (yyval.crepr) = template("(int) %s", (yyvsp[0].crepr)); }
 #line 1644 "ptucc_parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 26:
-#line 163 "ptucc_parser.y" /* yacc.c:1646  */
+#line 162 "ptucc_parser.y" /* yacc.c:1646  */
     { (yyval.crepr) = template("(int) %s", (yyvsp[0].crepr)); }
 #line 1650 "ptucc_parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 27:
-#line 164 "ptucc_parser.y" /* yacc.c:1646  */
+#line 163 "ptucc_parser.y" /* yacc.c:1646  */
     { (yyval.crepr) = template("(char) %s", (yyvsp[0].crepr)); }
 #line 1656 "ptucc_parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 28:
-#line 165 "ptucc_parser.y" /* yacc.c:1646  */
+#line 164 "ptucc_parser.y" /* yacc.c:1646  */
     { (yyval.crepr) = template("(double) %s", (yyvsp[0].crepr)); }
 #line 1662 "ptucc_parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 29:
-#line 166 "ptucc_parser.y" /* yacc.c:1646  */
+#line 165 "ptucc_parser.y" /* yacc.c:1646  */
     { (yyval.crepr) = template("%s + %s", (yyvsp[-2].crepr), (yyvsp[0].crepr)); }
 #line 1668 "ptucc_parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 30:
-#line 167 "ptucc_parser.y" /* yacc.c:1646  */
+#line 166 "ptucc_parser.y" /* yacc.c:1646  */
     { (yyval.crepr) = template("%s - %s", (yyvsp[-2].crepr), (yyvsp[0].crepr)); }
 #line 1674 "ptucc_parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 31:
-#line 168 "ptucc_parser.y" /* yacc.c:1646  */
+#line 167 "ptucc_parser.y" /* yacc.c:1646  */
     { (yyval.crepr) = template("%s * %s", (yyvsp[-2].crepr), (yyvsp[0].crepr)); }
 #line 1680 "ptucc_parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 32:
-#line 169 "ptucc_parser.y" /* yacc.c:1646  */
+#line 168 "ptucc_parser.y" /* yacc.c:1646  */
     { (yyval.crepr) = template("%s / %s", (yyvsp[-2].crepr), (yyvsp[0].crepr)); }
 #line 1686 "ptucc_parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 33:
-#line 170 "ptucc_parser.y" /* yacc.c:1646  */
+#line 169 "ptucc_parser.y" /* yacc.c:1646  */
     { (yyval.crepr) = template("%s / %s", (yyvsp[-2].crepr), (yyvsp[0].crepr)); }
 #line 1692 "ptucc_parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 34:
-#line 171 "ptucc_parser.y" /* yacc.c:1646  */
+#line 170 "ptucc_parser.y" /* yacc.c:1646  */
     { (yyval.crepr) = template("%s %% %s", (yyvsp[-2].crepr), (yyvsp[0].crepr)); }
 #line 1698 "ptucc_parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 35:
-#line 172 "ptucc_parser.y" /* yacc.c:1646  */
+#line 171 "ptucc_parser.y" /* yacc.c:1646  */
     { (yyval.crepr) = template("!%s", (yyvsp[0].crepr)); }
 #line 1704 "ptucc_parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 36:
-#line 173 "ptucc_parser.y" /* yacc.c:1646  */
+#line 172 "ptucc_parser.y" /* yacc.c:1646  */
     { (yyval.crepr) = template("-%s", (yyvsp[0].crepr)); }
 #line 1710 "ptucc_parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 37:
-#line 174 "ptucc_parser.y" /* yacc.c:1646  */
+#line 173 "ptucc_parser.y" /* yacc.c:1646  */
     { (yyval.crepr) = template("%s", (yyvsp[0].crepr)); }
 #line 1716 "ptucc_parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 38:
-#line 175 "ptucc_parser.y" /* yacc.c:1646  */
+#line 174 "ptucc_parser.y" /* yacc.c:1646  */
     { (yyval.crepr) = template("%s == %s", (yyvsp[-2].crepr), (yyvsp[0].crepr)); }
 #line 1722 "ptucc_parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 39:
-#line 176 "ptucc_parser.y" /* yacc.c:1646  */
+#line 175 "ptucc_parser.y" /* yacc.c:1646  */
     { (yyval.crepr) = template("%s != %s", (yyvsp[-2].crepr), (yyvsp[0].crepr)); }
 #line 1728 "ptucc_parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 40:
-#line 177 "ptucc_parser.y" /* yacc.c:1646  */
+#line 176 "ptucc_parser.y" /* yacc.c:1646  */
     { (yyval.crepr) = template("%s < %s", (yyvsp[-2].crepr), (yyvsp[0].crepr)); }
 #line 1734 "ptucc_parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 41:
-#line 178 "ptucc_parser.y" /* yacc.c:1646  */
+#line 177 "ptucc_parser.y" /* yacc.c:1646  */
     { (yyval.crepr) = template("%s > %s", (yyvsp[-2].crepr), (yyvsp[0].crepr)); }
 #line 1740 "ptucc_parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 42:
-#line 179 "ptucc_parser.y" /* yacc.c:1646  */
+#line 178 "ptucc_parser.y" /* yacc.c:1646  */
     { (yyval.crepr) = template("%s <= %s", (yyvsp[-2].crepr), (yyvsp[0].crepr)); }
 #line 1746 "ptucc_parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 43:
-#line 180 "ptucc_parser.y" /* yacc.c:1646  */
+#line 179 "ptucc_parser.y" /* yacc.c:1646  */
     { (yyval.crepr) = template("%s >= %s", (yyvsp[-2].crepr), (yyvsp[0].crepr)); }
 #line 1752 "ptucc_parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 44:
-#line 181 "ptucc_parser.y" /* yacc.c:1646  */
+#line 180 "ptucc_parser.y" /* yacc.c:1646  */
     { (yyval.crepr) = template("%s && %s", (yyvsp[-2].crepr), (yyvsp[0].crepr)); }
 #line 1758 "ptucc_parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 45:
-#line 182 "ptucc_parser.y" /* yacc.c:1646  */
+#line 181 "ptucc_parser.y" /* yacc.c:1646  */
     { (yyval.crepr) = template("%s || %s", (yyvsp[-2].crepr), (yyvsp[0].crepr)); }
 #line 1764 "ptucc_parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 46:
-#line 183 "ptucc_parser.y" /* yacc.c:1646  */
+#line 182 "ptucc_parser.y" /* yacc.c:1646  */
     { (yyval.crepr) = (yyvsp[0].crepr); }
 #line 1770 "ptucc_parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 47:
-#line 185 "ptucc_parser.y" /* yacc.c:1646  */
+#line 184 "ptucc_parser.y" /* yacc.c:1646  */
     { (yyval.crepr) = (yyvsp[0].crepr); }
 #line 1776 "ptucc_parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 48:
-#line 186 "ptucc_parser.y" /* yacc.c:1646  */
+#line 185 "ptucc_parser.y" /* yacc.c:1646  */
     { (yyval.crepr) = (yyvsp[0].crepr); }
 #line 1782 "ptucc_parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 49:
-#line 188 "ptucc_parser.y" /* yacc.c:1646  */
+#line 187 "ptucc_parser.y" /* yacc.c:1646  */
     { (yyval.crepr) = template("int"); }
 #line 1788 "ptucc_parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 50:
-#line 189 "ptucc_parser.y" /* yacc.c:1646  */
+#line 188 "ptucc_parser.y" /* yacc.c:1646  */
     { (yyval.crepr) = template("int"); }
 #line 1794 "ptucc_parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 51:
-#line 190 "ptucc_parser.y" /* yacc.c:1646  */
+#line 189 "ptucc_parser.y" /* yacc.c:1646  */
     { (yyval.crepr) = template("char"); }
 #line 1800 "ptucc_parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 52:
-#line 191 "ptucc_parser.y" /* yacc.c:1646  */
+#line 190 "ptucc_parser.y" /* yacc.c:1646  */
     { (yyval.crepr) = template("double"); }
 #line 1806 "ptucc_parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 53:
-#line 192 "ptucc_parser.y" /* yacc.c:1646  */
+#line 191 "ptucc_parser.y" /* yacc.c:1646  */
     { (yyval.crepr) = template("%s", (yyvsp[0].crepr)); }
 #line 1812 "ptucc_parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 54:
-#line 194 "ptucc_parser.y" /* yacc.c:1646  */
+#line 193 "ptucc_parser.y" /* yacc.c:1646  */
     { (yyval.crepr) = template("%s*", (yyvsp[0].crepr)); }
 #line 1818 "ptucc_parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 55:
-#line 196 "ptucc_parser.y" /* yacc.c:1646  */
+#line 195 "ptucc_parser.y" /* yacc.c:1646  */
     { (yyval.crepr) = ""; }
 #line 1824 "ptucc_parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 56:
-#line 197 "ptucc_parser.y" /* yacc.c:1646  */
+#line 196 "ptucc_parser.y" /* yacc.c:1646  */
     { (yyval.crepr) = template("%s\n", (yyvsp[0].crepr)); }
 #line 1830 "ptucc_parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 57:
-#line 199 "ptucc_parser.y" /* yacc.c:1646  */
+#line 198 "ptucc_parser.y" /* yacc.c:1646  */
     { (yyval.crepr) = (yyvsp[0].crepr); }
 #line 1836 "ptucc_parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 58:
-#line 200 "ptucc_parser.y" /* yacc.c:1646  */
+#line 199 "ptucc_parser.y" /* yacc.c:1646  */
     { (yyval.crepr) = template("%s%s", (yyvsp[-1].crepr), (yyvsp[0].crepr));  }
 #line 1842 "ptucc_parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 59:
-#line 202 "ptucc_parser.y" /* yacc.c:1646  */
+#line 201 "ptucc_parser.y" /* yacc.c:1646  */
     { (yyval.crepr) = template("\ttypedef %s %s;\n", (yyvsp[-1].crepr), (yyvsp[-3].crepr)); }
 #line 1848 "ptucc_parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 60:
-#line 203 "ptucc_parser.y" /* yacc.c:1646  */
+#line 202 "ptucc_parser.y" /* yacc.c:1646  */
     { (yyval.crepr) = template("\ttypedef %s %s%s;\n", (yyvsp[-1].crepr), (yyvsp[-6].crepr), (yyvsp[-3].crepr)); }
 #line 1854 "ptucc_parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 61:
-#line 204 "ptucc_parser.y" /* yacc.c:1646  */
+#line 203 "ptucc_parser.y" /* yacc.c:1646  */
     { (yyval.crepr) = template("\ttypedef %s (*%s)(%s);\n", (yyvsp[-1].crepr), (yyvsp[-8].crepr), (yyvsp[-4].crepr)); }
 #line 1860 "ptucc_parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 62:
-#line 205 "ptucc_parser.y" /* yacc.c:1646  */
+#line 204 "ptucc_parser.y" /* yacc.c:1646  */
     { (yyval.crepr) = template("\ttypedef %s (*%s)();\n", (yyvsp[-1].crepr), (yyvsp[-7].crepr)); }
 #line 1866 "ptucc_parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 63:
-#line 207 "ptucc_parser.y" /* yacc.c:1646  */
+#line 206 "ptucc_parser.y" /* yacc.c:1646  */
     { (yyval.crepr) = ""; }
 #line 1872 "ptucc_parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 64:
-#line 208 "ptucc_parser.y" /* yacc.c:1646  */
+#line 207 "ptucc_parser.y" /* yacc.c:1646  */
     { (yyval.crepr) = template("%s\n", (yyvsp[-1].crepr)); }
 #line 1878 "ptucc_parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 65:
-#line 210 "ptucc_parser.y" /* yacc.c:1646  */
+#line 209 "ptucc_parser.y" /* yacc.c:1646  */
     { (yyval.crepr) = (yyvsp[0].crepr); }
 #line 1884 "ptucc_parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 66:
-#line 211 "ptucc_parser.y" /* yacc.c:1646  */
+#line 210 "ptucc_parser.y" /* yacc.c:1646  */
     { (yyval.crepr) = template("%s%s", (yyvsp[-2].crepr), (yyvsp[0].crepr));  }
 #line 1890 "ptucc_parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 67:
-#line 213 "ptucc_parser.y" /* yacc.c:1646  */
+#line 212 "ptucc_parser.y" /* yacc.c:1646  */
     { (yyval.crepr) = template("\t%s %s;\n", (yyvsp[0].crepr), (yyvsp[-2].crepr)); }
 #line 1896 "ptucc_parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 68:
-#line 214 "ptucc_parser.y" /* yacc.c:1646  */
+#line 213 "ptucc_parser.y" /* yacc.c:1646  */
     { (yyval.crepr) = template("\t%s %s%s;\n", (yyvsp[0].crepr), (yyvsp[-5].crepr), (yyvsp[-2].crepr)); }
 #line 1902 "ptucc_parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 69:
-#line 215 "ptucc_parser.y" /* yacc.c:1646  */
+#line 214 "ptucc_parser.y" /* yacc.c:1646  */
     { (yyval.crepr) = template("\t%s (*%s)(%s);\n", (yyvsp[0].crepr), (yyvsp[-7].crepr), (yyvsp[-3].crepr)); }
 #line 1908 "ptucc_parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 70:
-#line 216 "ptucc_parser.y" /* yacc.c:1646  */
+#line 215 "ptucc_parser.y" /* yacc.c:1646  */
     { (yyval.crepr) = template("\t%s (*%s)();\n", (yyvsp[0].crepr), (yyvsp[-6].crepr)); }
 #line 1914 "ptucc_parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 71:
-#line 218 "ptucc_parser.y" /* yacc.c:1646  */
+#line 217 "ptucc_parser.y" /* yacc.c:1646  */
     { (yyval.crepr) = ""; }
 #line 1920 "ptucc_parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 72:
-#line 219 "ptucc_parser.y" /* yacc.c:1646  */
+#line 218 "ptucc_parser.y" /* yacc.c:1646  */
     { (yyval.crepr) = template("%s%s", (yyvsp[-1].crepr), (yyvsp[0].crepr));  }
 #line 1926 "ptucc_parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 73:
-#line 221 "ptucc_parser.y" /* yacc.c:1646  */
+#line 220 "ptucc_parser.y" /* yacc.c:1646  */
     { (yyval.crepr) = template("%s%s%s\t%s%s}\n\n", (yyvsp[-5].crepr), (yyvsp[-4].crepr), (yyvsp[-3].crepr), (yyvsp[-2].crepr), (yyvsp[-1].crepr)); }
 #line 1932 "ptucc_parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 74:
-#line 223 "ptucc_parser.y" /* yacc.c:1646  */
+#line 222 "ptucc_parser.y" /* yacc.c:1646  */
     { (yyval.crepr) = template("void %s(%s)\n{\n", (yyvsp[-4].crepr), (yyvsp[-2].crepr));  }
 #line 1938 "ptucc_parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 75:
-#line 224 "ptucc_parser.y" /* yacc.c:1646  */
+#line 223 "ptucc_parser.y" /* yacc.c:1646  */
     { (yyval.crepr) = template("void %s()\n{\n", (yyvsp[-3].crepr));  }
 #line 1944 "ptucc_parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 76:
-#line 225 "ptucc_parser.y" /* yacc.c:1646  */
+#line 224 "ptucc_parser.y" /* yacc.c:1646  */
     { (yyval.crepr) = template("%s %s(%s)\n{\n\t%s result;\n", (yyvsp[-1].crepr), (yyvsp[-6].crepr), (yyvsp[-4].crepr), (yyvsp[-1].crepr));  }
 #line 1950 "ptucc_parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 77:
-#line 226 "ptucc_parser.y" /* yacc.c:1646  */
+#line 225 "ptucc_parser.y" /* yacc.c:1646  */
     { (yyval.crepr) = template("%s %s()\n{\n%s result;\n", (yyvsp[-1].crepr), (yyvsp[-5].crepr), (yyvsp[-1].crepr));  }
 #line 1956 "ptucc_parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 78:
-#line 228 "ptucc_parser.y" /* yacc.c:1646  */
+#line 227 "ptucc_parser.y" /* yacc.c:1646  */
     { (yyval.crepr) = (yyvsp[0].crepr); }
 #line 1962 "ptucc_parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 79:
-#line 229 "ptucc_parser.y" /* yacc.c:1646  */
+#line 228 "ptucc_parser.y" /* yacc.c:1646  */
     { (yyval.crepr) = template("%s, %s", (yyvsp[-2].crepr), (yyvsp[0].crepr));  }
 #line 1968 "ptucc_parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 80:
-#line 231 "ptucc_parser.y" /* yacc.c:1646  */
+#line 230 "ptucc_parser.y" /* yacc.c:1646  */
     { (yyval.crepr) = fix_subroutine_idents((yyvsp[-2].crepr), (yyvsp[0].crepr), NULL); }
 #line 1974 "ptucc_parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 81:
-#line 232 "ptucc_parser.y" /* yacc.c:1646  */
+#line 231 "ptucc_parser.y" /* yacc.c:1646  */
     { (yyval.crepr) = fix_subroutine_idents((yyvsp[-5].crepr), (yyvsp[0].crepr), (yyvsp[-2].crepr)); }
 #line 1980 "ptucc_parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 82:
-#line 233 "ptucc_parser.y" /* yacc.c:1646  */
+#line 232 "ptucc_parser.y" /* yacc.c:1646  */
     { (yyval.crepr) = template("%s (*%s)(%s)", (yyvsp[0].crepr), (yyvsp[-7].crepr), (yyvsp[-3].crepr)); }
 #line 1986 "ptucc_parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 83:
-#line 234 "ptucc_parser.y" /* yacc.c:1646  */
+#line 233 "ptucc_parser.y" /* yacc.c:1646  */
     { (yyval.crepr) = template("%s (*%s)()", (yyvsp[0].crepr), (yyvsp[-6].crepr)); }
 #line 1992 "ptucc_parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 84:
-#line 236 "ptucc_parser.y" /* yacc.c:1646  */
+#line 235 "ptucc_parser.y" /* yacc.c:1646  */
     { (yyval.crepr) = template("%s", (yyvsp[-1].crepr)); }
 #line 1998 "ptucc_parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 85:
-#line 238 "ptucc_parser.y" /* yacc.c:1646  */
+#line 237 "ptucc_parser.y" /* yacc.c:1646  */
     { (yyval.crepr) = template("%s", (yyvsp[0].crepr)); }
 #line 2004 "ptucc_parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 86:
-#line 239 "ptucc_parser.y" /* yacc.c:1646  */
+#line 238 "ptucc_parser.y" /* yacc.c:1646  */
     { (yyval.crepr) = template("%s, %s", (yyvsp[-2].crepr), (yyvsp[0].crepr)); }
 #line 2010 "ptucc_parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 87:
-#line 241 "ptucc_parser.y" /* yacc.c:1646  */
+#line 240 "ptucc_parser.y" /* yacc.c:1646  */
     { (yyval.crepr) = ""; }
 #line 2016 "ptucc_parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 88:
-#line 242 "ptucc_parser.y" /* yacc.c:1646  */
+#line 241 "ptucc_parser.y" /* yacc.c:1646  */
     { (yyval.crepr) = (yyvsp[0].crepr); }
 #line 2022 "ptucc_parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 89:
-#line 244 "ptucc_parser.y" /* yacc.c:1646  */
+#line 243 "ptucc_parser.y" /* yacc.c:1646  */
     { (yyval.crepr) = template("[%s]", (yyvsp[-1].crepr)); }
 #line 2028 "ptucc_parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 90:
-#line 245 "ptucc_parser.y" /* yacc.c:1646  */
+#line 244 "ptucc_parser.y" /* yacc.c:1646  */
     { (yyval.crepr) = template("[%s]%s", (yyvsp[-2].crepr), (yyvsp[0].crepr)); }
 #line 2034 "ptucc_parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 91:
-#line 247 "ptucc_parser.y" /* yacc.c:1646  */
+#line 246 "ptucc_parser.y" /* yacc.c:1646  */
     { (yyval.crepr) = (yyvsp[0].crepr); }
 #line 2040 "ptucc_parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 92:
-#line 248 "ptucc_parser.y" /* yacc.c:1646  */
+#line 247 "ptucc_parser.y" /* yacc.c:1646  */
     { (yyval.crepr) = template("%s%s = %s;\n", (yyvsp[-3].crepr), (yyvsp[-2].crepr), (yyvsp[0].crepr)); }
 #line 2046 "ptucc_parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 93:
-#line 249 "ptucc_parser.y" /* yacc.c:1646  */
+#line 248 "ptucc_parser.y" /* yacc.c:1646  */
     { (yyval.crepr) = template("result = %s;\n", (yyvsp[0].crepr)); }
 #line 2052 "ptucc_parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 94:
-#line 250 "ptucc_parser.y" /* yacc.c:1646  */
+#line 249 "ptucc_parser.y" /* yacc.c:1646  */
     { (yyval.crepr) = template("if (%s) %s", (yyvsp[-2].crepr), (yyvsp[0].crepr)); }
 #line 2058 "ptucc_parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 95:
-#line 251 "ptucc_parser.y" /* yacc.c:1646  */
+#line 250 "ptucc_parser.y" /* yacc.c:1646  */
     { (yyval.crepr) = template("if (%s) %s\telse %s", (yyvsp[-4].crepr), (yyvsp[-2].crepr), (yyvsp[0].crepr)); }
 #line 2064 "ptucc_parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 96:
-#line 252 "ptucc_parser.y" /* yacc.c:1646  */
+#line 251 "ptucc_parser.y" /* yacc.c:1646  */
     { (yyval.crepr) = template("for (%s%s = %s; %s%s <= %s; %s%s++) %s", (yyvsp[-7].crepr), (yyvsp[-6].crepr), (yyvsp[-4].crepr), (yyvsp[-7].crepr), (yyvsp[-6].crepr), (yyvsp[-2].crepr), (yyvsp[-7].crepr), (yyvsp[-6].crepr), (yyvsp[0].crepr)); }
 #line 2070 "ptucc_parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 97:
-#line 253 "ptucc_parser.y" /* yacc.c:1646  */
+#line 252 "ptucc_parser.y" /* yacc.c:1646  */
     { (yyval.crepr) = template("for (%s%s = %s; %s%s >= %s; %s%s--) %s", (yyvsp[-7].crepr), (yyvsp[-6].crepr), (yyvsp[-4].crepr), (yyvsp[-7].crepr), (yyvsp[-6].crepr), (yyvsp[-2].crepr), (yyvsp[-7].crepr), (yyvsp[-6].crepr), (yyvsp[0].crepr)); }
 #line 2076 "ptucc_parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 98:
-#line 254 "ptucc_parser.y" /* yacc.c:1646  */
+#line 253 "ptucc_parser.y" /* yacc.c:1646  */
     { (yyval.crepr) = template("while (%s) %s", (yyvsp[-2].crepr), (yyvsp[0].crepr)); }
 #line 2082 "ptucc_parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 99:
-#line 255 "ptucc_parser.y" /* yacc.c:1646  */
-    { (yyval.crepr) = template("do%s\twhile (!%s);\n", (yyvsp[-2].crepr), (yyvsp[0].crepr)); }
+#line 254 "ptucc_parser.y" /* yacc.c:1646  */
+    { (yyval.crepr) = template("do%s\twhile (!(%s));\n", (yyvsp[-2].crepr), (yyvsp[0].crepr)); }
 #line 2088 "ptucc_parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 100:
-#line 256 "ptucc_parser.y" /* yacc.c:1646  */
+#line 255 "ptucc_parser.y" /* yacc.c:1646  */
     { (yyval.crepr) = template("%s:%s", (yyvsp[-2].crepr), (yyvsp[0].crepr)); }
 #line 2094 "ptucc_parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 101:
-#line 257 "ptucc_parser.y" /* yacc.c:1646  */
+#line 256 "ptucc_parser.y" /* yacc.c:1646  */
     { (yyval.crepr) = template("goto %s;\n", (yyvsp[0].crepr)); }
 #line 2100 "ptucc_parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 102:
-#line 258 "ptucc_parser.y" /* yacc.c:1646  */
+#line 257 "ptucc_parser.y" /* yacc.c:1646  */
     { (yyval.crepr) = template("return result;\n"); }
 #line 2106 "ptucc_parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 103:
-#line 259 "ptucc_parser.y" /* yacc.c:1646  */
+#line 258 "ptucc_parser.y" /* yacc.c:1646  */
     { (yyval.crepr) = template("scanf(\"%%s\", &%s%s);\n", (yyvsp[-5].crepr), (yyvsp[-4].crepr)); }
 #line 2112 "ptucc_parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 104:
-#line 260 "ptucc_parser.y" /* yacc.c:1646  */
+#line 259 "ptucc_parser.y" /* yacc.c:1646  */
     { (yyval.crepr) = template("scanf(\"%%d\", &%s%s);\n", (yyvsp[-5].crepr), (yyvsp[-4].crepr)); }
 #line 2118 "ptucc_parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 105:
-#line 261 "ptucc_parser.y" /* yacc.c:1646  */
+#line 260 "ptucc_parser.y" /* yacc.c:1646  */
     { (yyval.crepr) = template("scanf(\"%%lf\", &%s%s);\n", (yyvsp[-5].crepr), (yyvsp[-4].crepr)); }
 #line 2124 "ptucc_parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 106:
-#line 262 "ptucc_parser.y" /* yacc.c:1646  */
+#line 261 "ptucc_parser.y" /* yacc.c:1646  */
     { (yyval.crepr) = template("scanf(\"%%s\", &result);\n"); }
 #line 2130 "ptucc_parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 107:
-#line 263 "ptucc_parser.y" /* yacc.c:1646  */
+#line 262 "ptucc_parser.y" /* yacc.c:1646  */
     { (yyval.crepr) = template("scanf(\"%%d\", &result);\n"); }
 #line 2136 "ptucc_parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 108:
-#line 264 "ptucc_parser.y" /* yacc.c:1646  */
+#line 263 "ptucc_parser.y" /* yacc.c:1646  */
     { (yyval.crepr) = template("scanf(\"%%lf\", &result);\n"); }
 #line 2142 "ptucc_parser.tab.c" /* yacc.c:1646  */
     break;
@@ -2370,6 +2370,6 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 266 "ptucc_parser.y" /* yacc.c:1906  */
+#line 265 "ptucc_parser.y" /* yacc.c:1906  */
 
 

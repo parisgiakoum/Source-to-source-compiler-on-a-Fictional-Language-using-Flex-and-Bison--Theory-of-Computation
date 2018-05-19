@@ -1,8 +1,9 @@
-// Thia is a useless program testing every aspect of fl!
+// Thia is a correct program having two subrprograms in order to test almost every aspect of fl!
 
 program useless;
 
-@defmacro N 1000
+// Defines array size
+@defmacro N 1000	
 
 type
 	string = array of char;
@@ -28,7 +29,8 @@ begin
 		else result := 1;
 	return
 end;
-	
+
+// Prints shopping list
 procedure printShoppingList(i : integer; shoppingList: array [N] of string; priceList: array [N] of real; sum : real);
 
 begin
@@ -47,7 +49,7 @@ writeString('\n\nShopping list:\n');
 	writeString('€\n')
 end;
 
-
+// Procedure used to create a shopping list of up to 1000 items
 procedure shopping();
 
 var
@@ -55,13 +57,12 @@ var
 	priceList: array [N] of real;
 	tempString: string;
 	sum : real;
-	exit: char;
+	exit: integer;
 	
 begin
 	i := 0;
 	sum := 0;
-	exit := "N";
-	while (exit <> 'Y' and exit <> 'y') do begin
+	repeat begin
 		writeString("Give me an item: ");
 		tempString := readString();
 		shoppingList[i] := tempString;
@@ -71,19 +72,22 @@ begin
 		writeString("\n");
 		sum := sum + priceList[i];
 		i := i + 1;
-		label: writeString("\nexit? y/n: ");
-		exit := readString();
+		
+		// Exit functionality - uses goto to request right input
+		label: writeString("\nPress 0 to exit ot 1 to continue: ");
+		exit := readInteger();
 		writeString("\n");
-		if (exit <> 'y' and exit <> 'Y' and exit <> 'N' and exit <> 'n') then begin
+		if exit <> 1 and exit <> 0 then begin
 			writeString("Wrong input!\n");
 			goto label
 		end
-	end;
+	end
+	until exit = 0;
 	
 	printShoppingList(i, shoppingList, priceList, sum)
 end;
 
-
+// Menu
 procedure menu();
 var
 	power: function(x:real; y: integer): real;
@@ -119,7 +123,7 @@ begin
 	else writeString('\nHope to see you again!\n')
 end;
 	
-	
+// Main
 begin
 	menu()	
 end.

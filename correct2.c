@@ -51,12 +51,11 @@ void shopping()
 	double priceList[1000];
 	string tempString;
 	double sum;
-	char exit;
+	int exit;
 
 	i = 0;
 	sum = 0;
-	exit = 'N';
-	while ((exit != 'Y' && exit != 'y')) 
+	do
 	{
 	writeString("Give me an item: ");
 	scanf("%s", &tempString);
@@ -67,15 +66,16 @@ void shopping()
 	writeString("\n");
 	sum = sum + priceList[i];
 	i = i + 1;
-	label:writeString("\nexit? y/n: ");
-	scanf("%s", &exit);
+	label:writeString("\nPress 0 to exit ot 1 to continue: ");
+	scanf("%d", &exit);
 	writeString("\n");
-	if ((exit != 'y' && exit != 'Y' && exit != 'N' && exit != 'n')) 
+	if (exit != 1 && exit != 0) 
 	{
 	writeString("Wrong input!\n");
 	goto label;
 	}
 	}
+	while (!(exit == 0));
 	printShoppingList(i,shoppingList,priceList,sum);
 }
 
